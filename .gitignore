@@ -1,0 +1,11 @@
+NeatAlgorithm/obj/
+NeatAlgorithm/bin/
+NeatAlgorithm/Pacman/
+NeatAlgorithm/2048/
+NeatAlgorithm/Snake/
+NeatAlgorithm/Properties/
+NeatAlgorithm/App.config
+NeatAlgorithm/NeatAlgorithm.csproj
+.vs/
+NeatAlgorithm/Direction.cs
+NeatAlgorithm.sln
