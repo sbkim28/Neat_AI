@@ -17,21 +17,22 @@ namespace NeatAlgorithm
         // 즉 XOR을 해결하기 위해서는 신경망에서 구조의 발전이 있어야 한다, 
         // 이는 NEAT에서 위상 구조의 증가가 실제로 발생하며, 문제 해결에 기여하는지를 확인할 수 있는 쉬운 예제에 해당하므로
         // 우리는 XOR 문제를 NEAT를 통해서 우리가 작성한 NEAT의 코드가 정상적으로 잘 작동하는지 확인할 것이다.
+
+        // Case1과 Case2로 나누어 500번 진행할 것이며 두 경우에서 XOR 분류가 정상적으로 되는지 확인해보도록 하겠다.
         static void Main(string[] args)
         {
             Random r = new Random();
-            for (int i = 0; i < 10; ++i)
+            for (int i = 0; i < 500; ++i)
             {
                 Case1(r, i);
                 Case2(r, i);
             }
         }
-        // 결과, Case1과 Case2 모두 정상적으로 구조의 발전을 통해서 XOR 문제를 해결한 것을 확인하였다.
-        // 구체적인 차이는 데이터 분석을 통해서 알아보도록 할 것이다.
+        // 결과 Case1과 Case2의 데이터를 500개 확보하였으며, 데이터 분석을 통해서 XOR 문제가 두 경우 모두 해결되었는지 확인하도록 하겠다.
        
 
 
-        // Case1 : XOR 분류를 수행함. 이때 적합도를 평가하는 것은 아래 XORAgent의 Evaluate 함수에서 평가됨.
+        // Case1 : XOR 분류를 수행함. 이때 적합도를 평가하는 것은 아래 XORAgent의 Evaluate 함수에서 이루어짐.
         static void Case1(Random r, int index)
         {
             Pool p = new Pool(2, 1, r);
@@ -50,9 +51,10 @@ namespace NeatAlgorithm
                 p.Evaluate();
                 w.Sw.Flush();
             }
+            
         }
 
-
+        // Case2 : XOR 분류를 수행함. 이때 적합도를 평가하는 것은 아래 FixedXORAgent의 Evaluate 함수에서 이루어짐.
         static void Case2(Random r, int index)
         {
             Pool p = new Pool(2, 1, r);
