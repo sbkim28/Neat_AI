@@ -26,16 +26,16 @@ namespace NeatAlgorithm.NEAT
         public int Innovation { get; private set; }
 
         // δ의 문턱값. δ란, 개체 사이의 기능적 거리를 나타내는 값이며, 이 값에 따라서 종을 구분한다.
-        // δ = c₁D/N +  c₂W (excess node와 disjoint node를 구별하지 않을 때)
+        // δ = c₁D/N +  c₂W (excess gene와 disjoint gene를 구별하지 않을 때)
         // 여기서 c₁과 c₂는 상수이며, 각각의 요소에 대한 가중치를 부여한다.
-        // D는 disjoint node와 excess node의 개수를 나타낸다. 서로 다른 두 개체의 유전자를 혁신 수대로 나열하였을 때, 다음과 같다고 하자. (아래 값들은 유전자의 혁신 수를 나타낸다)
+        // D는 disjoint gene와 excess gene의 개수를 나타낸다. 서로 다른 두 개체의 유전자를 혁신 수대로 나열하였을 때, 다음과 같다고 하자. (아래 값들은 유전자의 혁신 수를 나타낸다)
         // 1 2 3 4   6 7     
         // 1 2 3 4 5   7 8 9 
-        // 이때 서로 일치하지 않으면서 사이에 있는 것들 (5, 6)은 disjoint node에 해당하고,
-        // 마지막에서 일치하지 않는 것들 (8, 9)는 excess node에 해당한다.
+        // 이때 서로 일치하지 않으면서 사이에 있는 것들 (5, 6)은 disjoint gene에 해당하고,
+        // 마지막에서 일치하지 않는 것들 (8, 9)는 excess gene에 해당한다.
         // 따라서 D = 2 + 2 = 4이다.
         // 이때 N은 유전자가 더 많은 개체의 유전자의 개수이다. 여기서는 밑의 개체의 유전자가 더 많으므로 N은 밑 개체의 유전자의 수인 8이 된다.
-        // (원 제작자의 논문은 excess node와 disjoint node를 구별하여 δ = c₁D/N + c₂E/N + c₃W (D는 disjoint 노드의 수, E는 excess node의 수)와 같이 나타내었지만,
+        // (원 제작자의 논문은 excess gene와 disjoint gene를 구별하여 δ = c₁D/N + c₂E/N + c₃W (D는 disjoint gene의 수, E는 excess gene의 수)와 같이 나타내었지만,
         // 둘의 큰 차이가 없고 논문에서 c₁과 c₂의 값을 같게 하였으며, 다른 neat를 활용한 연구에는 이를 구별하지 않는 경우도 많기에 우리는 이를 구별하지는 않겠다.)
         // 또 W는 일치하는 유전자의 가중치(weight)의 차이의 평균을 뜻한다. 여기서는 두 개체의 1, 2, 3, 4, 7번 유전자의 가중치의 차이의 합을 5로 나눈 값이 되겠다.
         // 두 개체 사이의 기능적 거리가 DeltaThreshold 이상이면 서로 다른 종으로 판단한다.
@@ -44,6 +44,8 @@ namespace NeatAlgorithm.NEAT
         public double DeltaDisjoint { get; set; }
         // c₂
         public double DeltaWeight { get; set; }
+
+        public bool Cut { get; set; }
 
         // 교배 및 변이율 관련 값들
         // 유전자의 가중치가 변화될 확률
@@ -113,6 +115,7 @@ namespace NeatAlgorithm.NEAT
             DeltaDisjoint = 1;
             DeltaWeight = 0.4;
             DeltaThreshold = 1;
+            Cut = true;
 
             PerturbChance = 0.9;
             StepSize = 0.1;

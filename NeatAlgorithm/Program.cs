@@ -4,9 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using NeatAlgorithm.NEAT;
-using NeatAlgorithm.Snake;
-using NeatAlgorithm._2048;
-using NeatAlgorithm.Pacman;
 using System.IO;
 using NeatAlgorithm.Util;
 
@@ -14,14 +11,34 @@ namespace NeatAlgorithm
 {
     class Program
     {
+        // XOR 분류를 실행해보자
+        // XOR 분류는 AND나 OR과는 달리 비선형 분류에 해당한다.
+        // 입력층과 출력층으로만 구성된 단순한 유전자는 단지 선형 분류만을 수행하기 때문에 XOR 분류를 해결하지 못한다.
+        // 즉 XOR을 해결하기 위해서는 신경망에서 구조의 발전이 있어야 한다, 
+        // 이는 NEAT에서 위상 구조의 증가가 실제로 발생하며, 문제 해결에 기여하는지를 확인할 수 있는 쉬운 예제에 해당하므로
+        // 우리는 XOR 문제를 NEAT를 통해서 우리가 작성한 NEAT의 코드가 정상적으로 잘 작동하는지 확인할 것이다.
         static void Main(string[] args)
         {
             Random r = new Random();
+            for (int i = 0; i < 10; ++i)
+            {
+                Case1(r, i);
+                Case2(r, i);
+            }
+        }
+        // 결과, Case1과 Case2 모두 정상적으로 구조의 발전을 통해서 XOR 문제를 해결한 것을 확인하였다.
+        // 구체적인 차이는 데이터 분석을 통해서 알아보도록 할 것이다.
+       
+
+
+        // Case1 : XOR 분류를 수행함. 이때 적합도를 평가하는 것은 아래 XORAgent의 Evaluate 함수에서 평가됨.
+        static void Case1(Random r, int index)
+        {
             Pool p = new Pool(2, 1, r);
             p.Population = 1000;
             p.WritePlayData = true;
-            XORAget xor = new XORAget();
-            Writer w = new Writer("D://NEAT/XOR.json");
+            XORAgent xor = new XORAgent();
+            Writer w = new Writer("D://NEAT/XOR_CASE1_" + index +".steamlog");
             p.Writer = w;
             p.Agent = xor;
             w.Start(p, 1);
@@ -33,18 +50,78 @@ namespace NeatAlgorithm
                 p.Evaluate();
                 w.Sw.Flush();
             }
-
         }
 
 
+        static void Case2(Random r, int index)
+        {
+            Pool p = new Pool(2, 1, r);
+            p.Population = 1000;
+            p.WritePlayData = true;
+            FixedXORAgent xor = new FixedXORAgent();
+            Writer w = new Writer("D://NEAT/XOR_CASE2_" + index +".steamlog");
+            p.Writer = w;
+            p.Agent = xor;
+            w.Start(p, 1);
+            p.Initialize();
+            DataDictionary dd = new ScoreDataDictionary();
+            p.DataDictionary = dd;
+            for (int i = 0; i < 100; ++i)
+            {
+                p.Evaluate();
+                w.Sw.Flush();
+            }
+        }
 
-        class XORAget : IAgent
+        // Case 1
+        class XORAgent : IAgent
         {
             public void Display(Genome g, DataDictionary dd)
             {
-                
+
             }
 
+            // 순서대로 (1,0), (0,1), (1,1), (0,0)을 입력값에 넣었을 때,
+            // (1,0)과 (0,1)에서는 참을 나타내는 0보다 큰 값,
+            // (0,0)과 (1,1)에서는 거짓을 나타내는 0보다 작은 값(이 기준은 임의로 잡은 것이다.)이 나오면 맞는 결과라 보고
+            // 맞춘 횟수를 적합도로 설정하였다.
+            public long Evaluate(Genome g, DataDictionary dd)
+            {
+                int score = 0;
+                if(g.EvaluateNetwork(new double[] { 1,0})[0] >0)
+                {
+                    ++score;
+                }
+                if (g.EvaluateNetwork(new double[] { 0, 1 })[0] > 0)
+                {
+                    ++score;
+                }
+                if (g.EvaluateNetwork(new double[] { 1, 1 })[0] < 0)
+                {
+                    ++score;
+                }
+                if (g.EvaluateNetwork(new double[] { 0, 0 })[0] < 0)
+                {
+                    ++score;
+                }
+                dd.CreateScore(g.GenomeId, 1);
+                dd.AddScore(g.GenomeId, score, 0);
+                return score + 1;
+            }
+        }
+
+        // Case 2
+        class FixedXORAgent : IAgent
+        {
+            public void Display(Genome g, DataDictionary dd)
+            { }
+
+            // 순서대로 (1,0), (0,1), (1,1), (0,0)을 입력값에 넣었을 때,
+            // (1,0)과 (0,1)에서는 참을 나타내는 0보다 큰 값,
+            // (0,0)과 (1,1)에서는 거짓을 나타내는 0보다 작은 값(이 기준은 임의로 잡은 것이다.)이 나오면 맞는 결과라 보았다.
+            // 정답이 1인 경우 출력값이 1보다 적으면 정답에서 출력값의 차를 제곱한 값과,
+            // 정답이 0인 경우 출력값이 -1보다 크면 정답에서 출력값의 차를 제곱한 값의 합을 계산하고,
+            // 그 값의 역수에 1000을 곱한 값을 적합도 함수로 사용하였다.
             public long Evaluate(Genome g, DataDictionary dd)
             {
                 int score = 0;
