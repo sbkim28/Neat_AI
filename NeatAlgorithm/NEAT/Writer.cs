@@ -42,29 +42,29 @@ namespace NeatAlgorithm.NEAT
             currentTime = Environment.TickCount;
         }
 
+
+        private double GetDeviation(long[] scores, double avg)
+        {
+            double deviation = 0;
+
+            foreach (long s in scores)
+            {
+                deviation = (s - avg) * (s - avg);
+            }
+            deviation /= scores.Length;
+            deviation = Math.Sqrt(deviation);
+            return deviation;
+        }
+        
+
         public void Write(Genome g, DataDictionary dd)
         {
             long[] bestScores = dd.GetScore(g.GenomeId);
-            double avgScore = 0;
-            double deviation = 0;
-            long topScore = 0;
-            foreach (int s in bestScores)
-            {
-                avgScore += s;
-                if (s > topScore) topScore = s;
-            }
-            avgScore /= bestScores.Length;
-            foreach (int s in bestScores)
-            {
-                deviation = (s - avgScore) * (s - avgScore);
-            }
-            deviation /= bestScores.Length;
-            deviation = Math.Sqrt(deviation);
 
             Species bestSpecies = null;
             Pool p = g.Pool;
-            int scoreSum = 0;
-            int bestScoreSum = 0;
+            long scoreSum = 0;
+            long bestScoreSum = 0;
             long fitnessSum = 0;
             foreach (Species s in g.Pool.Species)
             {
@@ -72,9 +72,9 @@ namespace NeatAlgorithm.NEAT
                 {
                     fitnessSum += genomes.Fitness;
                     long[] scoreset = dd.GetScore(genomes.GenomeId);
-                    int best = 0;
+                    long best = 0;
                     double scoreAv = 0;
-                    foreach (int score in scoreset)
+                    foreach (long score in scoreset)
                     {
                         if (best < score) best = score;
                         scoreSum += score;
@@ -87,24 +87,83 @@ namespace NeatAlgorithm.NEAT
                 }
             }
             double scoreAvg = (double)scoreSum / p.Population / bestScores.Length;
+            double bestScoreAvg = (double)bestScoreSum / p.Population;
             double fitnessAvg = (double)fitnessSum / p.Population;
 
-            Sw.WriteLine("\"Gen\" : {\"gen\":" + p.Generation + ", \"Species\":" + p.Species.Count + ", \"BestGenome\": {\"Id\":" + g.GenomeId + ", \"From\":" + g.FromGeneration + ", \"Fitness\":" + g.Fitness
-                + ", \"topScore\":" + topScore + ", \"avgScore\":" + avgScore + ", \"deviation\":" + deviation + "}, \"BestSpecies\":{\"id\":" + bestSpecies.SpeciesId + ", \"staleness\":" + bestSpecies.Staleness +
-                ", \"From\":" + bestSpecies.FromGen + ", \"Genomes\":" + bestSpecies.Genomes.Count + "}, \"ScoreAvg\":" + scoreAvg + ", \"FitnessAvg\":" + fitnessAvg +
-                ", \"Time\":" + (Environment.TickCount - currentTime) + "}");
+            StringBuilder sb = new StringBuilder();
+            sb.Append("\"Gen\" : {\"gen\":").Append(p.Generation).Append(", \"Species\":").Append(p.Species.Count)
+                .Append(", \"BestGenome\":");
+            WriteGene(sb, g, bestScores);
+
+            sb.Append( bestSpecies.SpeciesId).Append(", \"staleness\":").Append( bestSpecies.Staleness )
+                .Append(", \"From\":").Append(bestSpecies.FromGen ).Append( ", \"Genomes\":").Append( bestSpecies.Genomes.Count ).Append( "}, \"ScoreAvg\":")
+                .Append( scoreAvg).Append(", \"BestScoreAvg\":").Append(bestScoreAvg).Append( ", \"FitnessAvg\":" ).Append( fitnessAvg ).Append( ", \"Time\":" ).Append(Environment.TickCount - currentTime).Append( "}");
+
+            Sw.WriteLine(sb.ToString());
+        }
+
+        private void WriteGene(StringBuilder sb, Genome g, long[] scores)
+        {
+
+            double avgScore = 0;
+            long topScore = 0;
+            foreach (long s in scores)
+            {
+                avgScore += s;
+                if (s > topScore) topScore = s;
+            }
+            avgScore /= scores.Length;
+            double deviation = GetDeviation(scores, avgScore);
+
+            sb.Append("{\"Id\":").Append(g.GenomeId).Append(", \"From\":").Append(g.FromGeneration).Append(", \"Fitness\":").Append(g.Fitness)
+                .Append(", \"topScore\":").Append(topScore).Append(", \"avgScore\":").Append(avgScore).Append(", \"deviation\":").Append(deviation)
+                .Append("}");
         }
 
         public void WriteGene(Genome g, DataDictionary dd)
         {
             try
             {
-                Sw.WriteLine("Genome{" + g.GenesToString() + ", " + dd.GetDataAsString(g.GenomeId) + "}");
+                Sw.WriteLine("\"Genome\":{" + g.GenesToString() + ", " + dd.GetDataAsString(g.GenomeId) + "}");
             }catch(NotImplementedException e)
             {
-                Sw.WriteLine("Genome{" + g.GenesToString() + "}");
+                Sw.WriteLine("\"Genome\":{" + g.GenesToString() + "}");
             }
             
+        }
+
+        public void WriteSpecies(List<Species> species, DataDictionary dd)
+        {
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("\"Species\":[");
+
+            foreach(Species s in species)
+            {
+                long minFit = long.MinValue;
+                Genome best = null;
+                foreach(Genome g in s.Genomes)
+                {
+                    if(g.Fitness > minFit)
+                    {
+                        minFit = g.Fitness;
+                        best = g;
+                    }
+                }
+                long[] scores = dd.GetScore(best.GenomeId);
+
+                sb.Append("{\"Id\":").Append(s.SpeciesId)
+                    .Append(", \"Count\":").Append(s.Genomes.Count)
+                    .Append(", \"From\":").Append(s.FromGen)
+                    .Append(", \"Best:\"").Append("\"Genome\":");
+
+                WriteGene(sb, best, scores);
+                sb.Append(", ")
+                    .Append(best.GenesToString()).Append(", ").Append( dd.GetDataAsString(best.GenomeId)).Append( "}");
+
+            }
+            Sw.Write(sb.ToString());
+
         }
     }
 }

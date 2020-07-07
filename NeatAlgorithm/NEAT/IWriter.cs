@@ -12,5 +12,6 @@ namespace NeatAlgorithm.NEAT
         void Record();
         void Write(Genome g, DataDictionary dd);
         void WriteGene(Genome g, DataDictionary dd);
+        void WriteSpecies(List<Species> species, DataDictionary dd);
     }
 }

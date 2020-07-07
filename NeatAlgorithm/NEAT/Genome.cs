@@ -302,6 +302,11 @@ namespace NeatAlgorithm.NEAT
 
         }
 
+        public void RandomGenes(Random r)
+        {
+
+        }
+
         // 연결의 가중치를 변이시킴
         // 일정 확률로 교란을 통해 유전자의 가중치된다.
         // 교란은 일정 범위 내에서 가중치의 값을 변화시키는 것을 말한다.

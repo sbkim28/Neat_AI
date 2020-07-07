@@ -93,6 +93,7 @@ namespace NeatAlgorithm.NEAT
         public IWriter Writer { get;  set; }
 
         public bool WritePlayData { get; set; }
+        public bool WriteSpecies { get; set; }
 
         // 개체 번호를 부여하기 위한 값
         public int GenomeId { get; private set; }
@@ -209,6 +210,10 @@ namespace NeatAlgorithm.NEAT
                 if (WritePlayData)
                 {
                     Writer.WriteGene(BestGenome, DataDictionary);
+                }
+                if (WriteSpecies)
+                {
+                    Writer.WriteSpecies(Species, DataDictionary);
                 }
             }
             if (DataDictionary != null)
