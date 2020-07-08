@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,10 +13,11 @@ namespace NeatAlgorithm.NEAT
         public FileInfo File { get; private set; }
         private int currentTime;
         public StreamWriter Sw { get; private set; }
+        private Stopwatch sw;
 
         public Writer(String file) : this(new FileInfo(file))
         {
-
+            sw = new Stopwatch();
         }
 
         public Writer(FileInfo file)
@@ -39,7 +41,8 @@ namespace NeatAlgorithm.NEAT
 
         public void Record()
         {
-            currentTime = Environment.TickCount;
+            sw.Reset();
+            sw.Start();
         }
 
 
@@ -59,6 +62,7 @@ namespace NeatAlgorithm.NEAT
 
         public void Write(Genome g, DataDictionary dd)
         {
+            sw.Stop();
             long[] bestScores = dd.GetScore(g.GenomeId);
 
             Species bestSpecies = null;
@@ -97,7 +101,7 @@ namespace NeatAlgorithm.NEAT
 
             sb.Append( bestSpecies.SpeciesId).Append(", \"staleness\":").Append( bestSpecies.Staleness )
                 .Append(", \"From\":").Append(bestSpecies.FromGen ).Append( ", \"Genomes\":").Append( bestSpecies.Genomes.Count ).Append( "}, \"ScoreAvg\":")
-                .Append( scoreAvg).Append(", \"BestScoreAvg\":").Append(bestScoreAvg).Append( ", \"FitnessAvg\":" ).Append( fitnessAvg ).Append( ", \"Time\":" ).Append(Environment.TickCount - currentTime).Append( "}");
+                .Append( scoreAvg).Append(", \"BestScoreAvg\":").Append(bestScoreAvg).Append( ", \"FitnessAvg\":" ).Append( fitnessAvg ).Append( ", \"Time\":" ).Append(sw.ElapsedMilliseconds).Append( "}");
 
             Sw.WriteLine(sb.ToString());
         }
@@ -163,6 +167,11 @@ namespace NeatAlgorithm.NEAT
 
             }
             Sw.Write(sb.ToString());
+
+        }
+
+        public void Set(string key, object val)
+        {
 
         }
     }

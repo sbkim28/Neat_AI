@@ -10,3 +10,4 @@ NeatAlgorithm/NeatAlgorithm.csproj
 NeatAlgorithm.sln
 NeatAlgorithm/packages.config
 packages/
+NeatAlgorithm/Program.cs

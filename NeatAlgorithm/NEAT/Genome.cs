@@ -21,6 +21,9 @@ namespace NeatAlgorithm.NEAT
 
         public int NodeIndex { get; private set; }
 
+        public int Complexity { get; set; }
+        public long ExecutionTime { get; set; }
+
         // 개체의 신경망. 개체의 유전자 정보를 바탕으로 구현됨.
         public Dictionary<int, Node> Network { get; private set; }
 
@@ -52,6 +55,7 @@ namespace NeatAlgorithm.NEAT
         // 개체에 있는 유전자의 정보(연결 정보)를 바탕으로 노드를 생성한다.
         public void GenerateNetwork()
         {
+            Complexity = 0;
             Dictionary<int, Node> network = new Dictionary<int, Node>();
             for (int i = 0; i < Pool.Inputs; ++i)
             {
@@ -62,9 +66,10 @@ namespace NeatAlgorithm.NEAT
             {
                 network.Add(Pool.MaxNodes + i, new Node());
             }
-            Genes.Sort((a, b) => a.Out.CompareTo(b.Out));
+            //Genes.Sort((a, b) => a.Out.CompareTo(b.Out));
             foreach (Gene g in Genes)
             {
+                ++Complexity;
                 if (g.Enable)
                 {
                     if (!network.ContainsKey(g.Out))
@@ -79,6 +84,7 @@ namespace NeatAlgorithm.NEAT
                     }
                 }
             }
+            Complexity += network.Keys.Count;
             Network = network;
 
         }
@@ -279,8 +285,8 @@ namespace NeatAlgorithm.NEAT
         public void MutateNode(Random r)
         {
             if (Genes.Count == 0) return;
-            Gene gene = Genes[r.Next(Genes.Count)];
-            if (!gene.Enable) return;
+            Gene gene = RandomGenes(r);
+            if (gene == null || !gene.Enable) return;
             
             gene.Enable = false;
             
@@ -302,9 +308,17 @@ namespace NeatAlgorithm.NEAT
 
         }
 
-        public void RandomGenes(Random r)
+        public Gene RandomGenes(Random r)
         {
+            List<Gene> genes = new List<Gene>();
+            foreach(Gene g in Genes)
+            {
+                if (g.Out > NodeIndex)
+                    genes.Add(g);
+            }
+            if (genes.Count == 0) return null;
 
+            return genes[r.Next(genes.Count)];
         }
 
         // 연결의 가중치를 변이시킴

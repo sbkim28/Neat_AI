@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -100,7 +101,8 @@ namespace NeatAlgorithm.NEAT
         // 종 번호를 부여하기 위한 값
         public int SpeciesId { get; private set; }
 
-
+        private Stopwatch sw;
+        private Stopwatch insw;
         
         public Random random;
 
@@ -134,6 +136,8 @@ namespace NeatAlgorithm.NEAT
             DisplayTop = 1;
             Species = new List<Species>();
             this.random = random;
+            sw = new Stopwatch();
+            insw = new Stopwatch();
         }
 
         // 초기 개체를 생성하는 함수
@@ -178,7 +182,12 @@ namespace NeatAlgorithm.NEAT
                 Genome g = GetCurrentGenome();
                 g.GenerateNetwork();
                 // 적합도 평가
+                insw.Reset();
+                insw.Start();
                 g.Fitness = Agent.Evaluate(g, DataDictionary);
+                insw.Stop();
+                g.ExecutionTime = insw.ElapsedMilliseconds;
+
                 g.AdjustedFitness = (double)g.Fitness / Species[speciesCursor].Genomes.Count;
 
                 Species[speciesCursor].AddFitness(g.AdjustedFitness);
@@ -221,6 +230,9 @@ namespace NeatAlgorithm.NEAT
                 DataDictionary.Clear();
             }
 
+            sw.Reset();
+            sw.Start();
+
             // for debug
             Console.Write("Generation:" + Generation);
             Console.Write("\tHighest Fitness:" + TopFitness);
@@ -236,10 +248,10 @@ namespace NeatAlgorithm.NEAT
                 Genome prevBest = s.Genomes[0];
                 s.Genomes.Sort((a, b) => a.Fitness.CompareTo(b.Fitness));
                 Genome currentBest = s.Genomes[s.Genomes.Count - 1];
-
                 // 종에서 기존의 가장 우수한 개체보다 더 적합도가 높은 개체가 등장하지 못했을 경우
                 if (prevBest == currentBest)
                 {
+                    
                     ++s.Staleness;
                     // staleness가 일정 수준 이상이고, 전체에서 가장 우수한 개체가 속한 종이 아니라면, 종을 제거함
                     if (s.Staleness > Staleness && BestGenome != currentBest)
@@ -323,7 +335,8 @@ namespace NeatAlgorithm.NEAT
             
             TopFitness = long.MinValue;
             BestGenome = null;
-
+            sw.Stop();
+            Writer.Set("Breed", sw.ElapsedMilliseconds);
         }
 
         // 자식을 생성할 때, 종 내에서 한 개체를 뽑음. 한 개체가 선택될 확률은 (개체의 적합도) / (종 내의 모든 개체의 적합도의 합) 이다.

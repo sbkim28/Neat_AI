@@ -15,32 +15,41 @@ namespace NeatAlgorithm
     {
         static void Main(string[] args)
         {
-            //DataReader dr = new DataReader();
-            //dr.Read();
-            //dr.Analyze();
             
             Random r = new Random();
-            Pool p = new Pool(24, 4, r);
-            p.Population = 300;
-            p.DisplayTop = 5;
-            p.DeltaThreshold = 0.45;
-            p.WritePlayData = true;
-            SnakeAgent sa = new SnakeAgent(16, 16, r);
-            Writer w = new Writer("D://NEAT/test.txt");
-            sa.Execute = 10;
-            w.Start(p, sa.Execute);
-            p.Writer = w;
-            p.Agent = sa;
-            p.Initialize();
-            p.WriteSpecies = true;
-            DataDictionary dd = new SnakeDataDictionary();
-            p.DataDictionary = dd;
-            for (int i = 0; i < 1000; ++i)
-            {
-                p.Evaluate();
-                
-            }
             
+            Snake(r);
+        }
+
+        static void Snake(Random r)
+        {
+            for (int i = 11; i < 20; ++i)
+            {
+                Pool p = new Pool(24, 4, r);
+                p.Population = 100;
+                p.DisplayTop = int.MaxValue;
+                p.DeltaThreshold = 0.4;
+                p.WritePlayData = false;
+                p.WriteSpecies = false;
+
+                SnakeAgent sa = new SnakeAgent(16, 16, r);
+                sa.Execute = 5;
+                p.Agent = sa;
+
+                using (ExcelDataWriter w = new ExcelDataWriter(string.Format("D:\\NEAT\\Snake\\P{0}E5\\DATA{1}.xlsx", p.Population,  i)) )
+                {
+                    w.Start(p, sa.Execute);
+                    p.Writer = w;
+                    p.Initialize();
+                    DataDictionary dd = new SnakeDataDictionary();
+                    p.DataDictionary = dd;
+                    w.Record();
+                    for (int j = 0; j < 200; ++j)
+                    {
+                        p.Evaluate();
+                    }
+                }
+            }
         }
         
         
@@ -70,7 +79,7 @@ namespace NeatAlgorithm
             p.Population = 1000;
             p.WritePlayData = true;
             XORAgent xor = new XORAgent();
-            Writer w = new Writer("D://NEAT/XOR_CASE1_" + index +".steamlog");
+            Writer w = new Writer("D://NEAT/XOR_CASE1_" + index + ".steamlog");
             p.Writer = w;
             p.Agent = xor;
             w.Start(p, 1);

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Threading;
 
 using NeatAlgorithm.NEAT;
+using System.Diagnostics;
 
 namespace NeatAlgorithm.Snake
 {
@@ -17,7 +18,7 @@ namespace NeatAlgorithm.Snake
         public LinkedList<Square> Snake { get; private set; }
         public Square Food { get; set; }
         public int Execute { get; set; }
-
+        
         private Random random;
         
 
@@ -199,6 +200,7 @@ namespace NeatAlgorithm.Snake
         public long Evaluate(Genome g, DataDictionary dd)
         {
             SnakeDataDictionary fdd =  dd as SnakeDataDictionary;
+            fdd.CreateLifetime(g.GenomeId, Execute);
             fdd.CreateScore(g.GenomeId, Execute);
             long best = 0;
             long sum = 0;
@@ -240,6 +242,7 @@ namespace NeatAlgorithm.Snake
                     fdd.AddFood(g.GenomeId, foodList);
                 }
                 fdd.AddScore(g.GenomeId, Score, k);
+                fdd.AddLifetime(g.GenomeId, LifeTime, k);
             }
             return sum / Execute; 
         }
