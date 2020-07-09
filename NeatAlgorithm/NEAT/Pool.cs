@@ -36,8 +36,6 @@ namespace NeatAlgorithm.NEAT
         // 마지막에서 일치하지 않는 것들 (8, 9)는 excess gene에 해당한다.
         // 따라서 D = 2 + 2 = 4이다.
         // 이때 N은 유전자가 더 많은 개체의 유전자의 개수이다. 여기서는 밑의 개체의 유전자가 더 많으므로 N은 밑 개체의 유전자의 수인 8이 된다.
-        // (원 제작자의 논문은 excess gene와 disjoint gene를 구별하여 δ = c₁D/N + c₂E/N + c₃W (D는 disjoint gene의 수, E는 excess gene의 수)와 같이 나타내었지만,
-        // 둘의 큰 차이가 없고 논문에서 c₁과 c₂의 값을 같게 하였으며, 다른 neat를 활용한 연구에는 이를 구별하지 않는 경우도 많기에 우리는 이를 구별하지는 않겠다.)
         // 또 W는 일치하는 유전자의 가중치(weight)의 차이의 평균을 뜻한다. 여기서는 두 개체의 1, 2, 3, 4, 7번 유전자의 가중치의 차이의 합을 5로 나눈 값이 되겠다.
         // 두 개체 사이의 기능적 거리가 DeltaThreshold 이상이면 서로 다른 종으로 판단한다.
         public double DeltaThreshold { get; set; }

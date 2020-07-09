@@ -55,21 +55,14 @@ namespace NeatAlgorithm._2048
             long sum = 0;
 
             dd.CreateScore(g.GenomeId, Execute);
-<<<<<<< HEAD
             dd.CreateLifetime(g.GenomeId, Execute);
 
             int lifetime;
-=======
-
->>>>>>> 7d694d25f4d4badcc2fb5de1ab8276077f79adb0
             for (int i = 0; i < Execute; ++i)
             {
                 LinkedList<CreatedCells> cellLog = new LinkedList<CreatedCells>();
                 Initialize(g.GenomeId, cellLog);
-<<<<<<< HEAD
                 lifetime = 0;
-=======
->>>>>>> 7d694d25f4d4badcc2fb5de1ab8276077f79adb0
                 while (!Gameover)
                 {
                     double[] output = g.EvaluateNetwork(GetInputs());
@@ -89,10 +82,7 @@ namespace NeatAlgorithm._2048
                     }
                     CreateRandom(SizeEmpty(), cellLog);
                     SetGameover();
-<<<<<<< HEAD
                     ++lifetime;
-=======
->>>>>>> 7d694d25f4d4badcc2fb5de1ab8276077f79adb0
                 }
                 sum += GetFitness();
                  
@@ -102,10 +92,6 @@ namespace NeatAlgorithm._2048
                     d2d.AddCells(g.GenomeId, cellLog);
                     
                 }
-<<<<<<< HEAD
-                dd.AddLifetime(g.GenomeId, lifetime, i);
-=======
->>>>>>> 7d694d25f4d4badcc2fb5de1ab8276077f79adb0
 
                 dd.AddScore(g.GenomeId, Score, i);
             }
