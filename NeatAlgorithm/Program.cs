@@ -8,6 +8,7 @@ using System.IO;
 using NeatAlgorithm.Util;
 using NeatAlgorithm.Data;
 using NeatAlgorithm.Snake;
+using NeatAlgorithm._2048;
 
 namespace NeatAlgorithm
 {
@@ -21,32 +22,61 @@ namespace NeatAlgorithm
             Snake(r);
         }
 
+        static void _2048(Random r)
+        {
+            Pool p = new Pool(16, 4, r);
+            p.Population = 500;
+            p.DisplayTop = 5;
+            p.ConnectionMutationChance = 0.25;
+            p.NodeMutationChance = 0.15;
+            p.DeltaThreshold = 0.5;
+            p.WritePlayData = false;
+            p.WriteSpecies = false;
+            Agent2048 a2 = new Agent2048(r);
+            a2.Execute = 10;
+            p.Agent = a2;
+            p.Initialize();
+            DataDictionary dd = new Data2048Dictionary();
+            p.DataDictionary = dd;
+            for (int i = 0; i < 300; ++i){
+                p.Evaluate();
+            }
+        }
+
         static void Snake(Random r)
         {
-            for (int i = 11; i < 20; ++i)
+
+            
+            
+
+            for(int i =3; i < 5; ++i)
             {
-                Pool p = new Pool(24, 4, r);
-                p.Population = 100;
-                p.DisplayTop = int.MaxValue;
-                p.DeltaThreshold = 0.4;
-                p.WritePlayData = false;
-                p.WriteSpecies = false;
-
-                SnakeAgent sa = new SnakeAgent(16, 16, r);
-                sa.Execute = 5;
-                p.Agent = sa;
-
-                using (ExcelDataWriter w = new ExcelDataWriter(string.Format("D:\\NEAT\\Snake\\P{0}E5\\DATA{1}.xlsx", p.Population,  i)) )
+                
+                for(int j = 0; j < 30; ++j)
                 {
-                    w.Start(p, sa.Execute);
-                    p.Writer = w;
-                    p.Initialize();
-                    DataDictionary dd = new SnakeDataDictionary();
-                    p.DataDictionary = dd;
-                    w.Record();
-                    for (int j = 0; j < 200; ++j)
+                    Pool p = new Pool(24, 4, r);
+                    p.Population = 200;
+                    p.DisplayTop = int.MaxValue;
+                    p.DeltaThreshold = 0.4;
+                    p.WritePlayData = false;
+                    p.WriteSpecies = false;
+
+                    SnakeAgent sa = new SnakeAgent(16, 16, r);
+                    sa.Execute = 1+i*2;
+                    p.Agent = sa;
+
+                    using (ExcelDataWriter w = new ExcelDataWriter(string.Format("D:\\NEAT\\Snake\\P200E{0}\\DATA{1}.xlsx", sa.Execute, j)))
                     {
-                        p.Evaluate();
+                        w.Start(p, sa.Execute);
+                        p.Writer = w;
+                        p.Initialize();
+                        DataDictionary dd = new SnakeDataDictionary();
+                        p.DataDictionary = dd;
+                        w.Record();
+                        for (int k = 0; k < 200; ++k)
+                        {
+                            p.Evaluate();
+                        }
                     }
                 }
             }

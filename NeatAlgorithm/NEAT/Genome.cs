@@ -17,7 +17,7 @@ namespace NeatAlgorithm.NEAT
         public long Fitness { get; set; }
         public double AdjustedFitness { get; set; }
         // 개체가 만들어진 세대
-        public int FromGeneration { get; private set; }
+        public int FromGeneration { get; set; }
 
         public int NodeIndex { get; private set; }
 

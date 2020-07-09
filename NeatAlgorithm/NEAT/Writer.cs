@@ -33,10 +33,10 @@ namespace NeatAlgorithm.NEAT
 
         public void Start(Pool pool, int execute)
         {
-            Sw.WriteLine("\"Settings\":{\"Execution\":" + execute + ", \"Population\":" + pool.Population + ", \"DeltaThreshold\":" + pool.DeltaThreshold +
+            Sw.WriteLine("{\"Settings\":{\"Execution\":" + execute + ", \"Population\":" + pool.Population + ", \"DeltaThreshold\":" + pool.DeltaThreshold +
                 ", \"DeltaDisjoint\":" + pool.DeltaDisjoint + ", \"DeltaWeight\":" + pool.DeltaWeight + ", \"PerturbChance\":" + pool.PerturbChance + ", \"StepSize\":" + pool.StepSize +
                 ", \"LinkMutationChance\":" + pool.LinkMutationChance + ", \"ConnectionMutationChance\":" + pool.ConnectionMutationChance + ", \"NodeMutationChance\":" + pool.NodeMutationChance +
-                ", \"EnableMutationChance\":" + pool.EnableMutationChance + ", \"DisableMutationChance\":" + pool.DisableMutationChance + ", \"SurviveRate\":" + pool.SurviveRate + ", \"Staleness\":" + pool.Staleness + "}");
+                ", \"EnableMutationChance\":" + pool.EnableMutationChance + ", \"DisableMutationChance\":" + pool.DisableMutationChance + ", \"SurviveRate\":" + pool.SurviveRate + ", \"Staleness\":" + pool.Staleness + "}}");
         }
 
         public void Record()
@@ -95,13 +95,13 @@ namespace NeatAlgorithm.NEAT
             double fitnessAvg = (double)fitnessSum / p.Population;
 
             StringBuilder sb = new StringBuilder();
-            sb.Append("\"Gen\" : {\"gen\":").Append(p.Generation).Append(", \"Species\":").Append(p.Species.Count)
+            sb.Append("{\"Gen\":{\"gen\":").Append(p.Generation).Append(", \"Species\":").Append(p.Species.Count)
                 .Append(", \"BestGenome\":");
             WriteGene(sb, g, bestScores);
 
             sb.Append( bestSpecies.SpeciesId).Append(", \"staleness\":").Append( bestSpecies.Staleness )
                 .Append(", \"From\":").Append(bestSpecies.FromGen ).Append( ", \"Genomes\":").Append( bestSpecies.Genomes.Count ).Append( "}, \"ScoreAvg\":")
-                .Append( scoreAvg).Append(", \"BestScoreAvg\":").Append(bestScoreAvg).Append( ", \"FitnessAvg\":" ).Append( fitnessAvg ).Append( ", \"Time\":" ).Append(sw.ElapsedMilliseconds).Append( "}");
+                .Append( scoreAvg).Append(", \"BestScoreAvg\":").Append(bestScoreAvg).Append( ", \"FitnessAvg\":" ).Append( fitnessAvg ).Append( ", \"Time\":" ).Append(sw.ElapsedMilliseconds).Append( "}}");
 
             Sw.WriteLine(sb.ToString());
         }
@@ -120,7 +120,7 @@ namespace NeatAlgorithm.NEAT
             double deviation = GetDeviation(scores, avgScore);
 
             sb.Append("{\"Id\":").Append(g.GenomeId).Append(", \"From\":").Append(g.FromGeneration).Append(", \"Fitness\":").Append(g.Fitness)
-                .Append(", \"topScore\":").Append(topScore).Append(", \"avgScore\":").Append(avgScore).Append(", \"deviation\":").Append(deviation)
+                .Append(", \"topScore\":").Append(topScore).Append(", \"avgScore\":").Append(avgScore).Append(", \"deviation\":").Append(deviation).Append(", \"ExecutionTime\":").Append(g.ExecutionTime)
                 .Append("}");
         }
 
@@ -128,10 +128,10 @@ namespace NeatAlgorithm.NEAT
         {
             try
             {
-                Sw.WriteLine("\"Genome\":{" + g.GenesToString() + ", " + dd.GetDataAsString(g.GenomeId) + "}");
+                Sw.WriteLine("{\"Genome\":{" + g.GenesToString() + ", " + dd.GetDataAsString(g.GenomeId) + "}}");
             }catch(NotImplementedException e)
             {
-                Sw.WriteLine("\"Genome\":{" + g.GenesToString() + "}");
+                Sw.WriteLine("{\"Genome\":{" + g.GenesToString() + "}}");
             }
             
         }
@@ -140,7 +140,7 @@ namespace NeatAlgorithm.NEAT
         {
 
             StringBuilder sb = new StringBuilder();
-            sb.Append("\"Species\":[");
+            sb.Append("{\"Species\":[");
 
             foreach(Species s in species)
             {
@@ -163,7 +163,7 @@ namespace NeatAlgorithm.NEAT
 
                 WriteGene(sb, best, scores);
                 sb.Append(", ")
-                    .Append(best.GenesToString()).Append(", ").Append( dd.GetDataAsString(best.GenomeId)).Append( "}");
+                    .Append(best.GenesToString()).Append(", ").Append( dd.GetDataAsString(best.GenomeId)).Append( "}}");
 
             }
             Sw.Write(sb.ToString());

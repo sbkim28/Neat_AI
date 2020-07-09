@@ -1,8 +1,9 @@
 NeatAlgorithm/obj/
 NeatAlgorithm/bin/
-NeatAlgorithm/Pacman/
-NeatAlgorithm/2048/
 NeatAlgorithm/Data/
+NeatAlgorithm/Snake/SnakeForm.cs
+NeatAlgorithm/Snake/SnakeForm.Designer.cs
+NeatAlgorithm/Snake/SnakeForm.resx
 NeatAlgorithm/Properties/
 NeatAlgorithm/App.config
 NeatAlgorithm/NeatAlgorithm.csproj

@@ -336,7 +336,10 @@ namespace NeatAlgorithm.NEAT
             TopFitness = long.MinValue;
             BestGenome = null;
             sw.Stop();
-            Writer.Set("Breed", sw.ElapsedMilliseconds);
+            if (Writer != null)
+            {
+                Writer.Set("Breed", sw.ElapsedMilliseconds);
+            }
         }
 
         // 자식을 생성할 때, 종 내에서 한 개체를 뽑음. 한 개체가 선택될 확률은 (개체의 적합도) / (종 내의 모든 개체의 적합도의 합) 이다.
