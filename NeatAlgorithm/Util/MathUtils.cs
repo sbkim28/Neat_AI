@@ -9,6 +9,10 @@ namespace NeatAlgorithm.Util
     // 필요한 수학 함수를 모와둔 클래스
     public class MathUtils
     {
+        public static double ReLU(double x)
+        {
+            return x < 0 ? 0 : x;
+        }
 
         // 시그모이드 함수, 원 제작자의 논문에서 기재된 조정된 함수를 가져와 사용함
         public static double 

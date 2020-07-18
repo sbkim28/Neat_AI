@@ -12,14 +12,17 @@ using NeatAlgorithm._2048;
 
 namespace NeatAlgorithm
 {
+
     class Program
     {
+        [STAThread]
         static void Main(string[] args)
         {
             
             Random r = new Random();
-            
-            Pacman(r);
+            SnakeForm sf = new SnakeForm();
+            System.Windows.Forms.Application.Run(sf);
+            //Snake(r);
         }
 
         static void Pacman(Random r)
@@ -33,10 +36,96 @@ namespace NeatAlgorithm
 
         static void Snake(Random r)
         {
-            
+            for (int i = 20; i < 50; ++i)
+            {
+                Pool p = new Pool(24, 4, r);
+                p.Population = 500;
+                SnakeAgent sa = new SnakeAgent(16, 16, r);
+                sa.Execute = 5;
+                SnakeDataDictionary sdd = new SnakeDataDictionary();
+                p.Agent = sa;
+                p.DeltaThreshold = 4;
+                p.DeltaDisjoint = 10;
+                p.DeltaWeight = 4;
+
+                p.LinkMutationChance = 0.75;
+                p.ConnectionMutationChance = 0.2;
+                p.NodeMutationChance = 0.2;
+                //Writer w = new Writer(new FileInfo(string.Format("D://NEAT/Data{0}.txt", i)));
+
+                //p.WritePlayData = true;
+                //p.WriteSpecies = true;
+                //p.Writer = w;
+                p.DataDictionary = sdd;
+                //w.Start(p, sa.Execute);
+                p.Initialize();
+                p.DisplayTop = 5;
+
+                for (int k = 0; k < 300; ++k)
+                {
+                    p.Evaluate();
+                    //w.Sw.Flush();
+                }
+            }
         }
-        
-        
+
+        static void SnakeM(Random r)
+        {
+            Console.Write("Index : ");
+            int index = int.Parse(Console.ReadLine());
+            int x = index % 5;
+            int y = index / 5 % 25;
+            int z = index / 25;
+            double l = (x + 1) * 0.2;
+            double c = (y + 1) * 0.2;
+            double n = (z + 1) * 0.2;
+            Console.Write("Max : ");
+            int max = int.Parse(Console.ReadLine());
+
+            Console.WriteLine("Current Location : ");
+            int current = int.Parse(Console.ReadLine());
+
+            for (int j = index; j < 125; ++j)
+            {
+                for (int i = current; i < max; ++i)
+                {
+                    Pool p = new Pool(24, 4, r);
+                    p.Population = 500;
+                    SnakeAgent sa = new SnakeAgent(16, 16, r);
+                    sa.Execute = 5;
+                    SnakeDataDictionary sdd = new SnakeDataDictionary();
+                    p.Agent = sa;
+                    p.DeltaThreshold = 4;
+                    p.DeltaDisjoint = 10;
+                    p.DeltaWeight = 4;
+
+                    p.LinkMutationChance = l;
+                    p.ConnectionMutationChance = c;
+                    p.NodeMutationChance = n;
+                    Writer w = new Writer(new FileInfo(string.Format("D://NEAT/DATA{0}_{1}.txt", index, i)));
+
+                    p.WritePlayData = true;
+                    p.WriteSpecies = true;
+                    p.Writer = w;
+                    p.DataDictionary = sdd;
+                    w.Start(p, sa.Execute);
+                    p.Initialize();
+                    p.DisplayTop = int.MaxValue;
+                    p.WritePlayData = true;
+
+                    for (int k = 0; k < 300; ++k)
+                    {
+                        p.Evaluate();
+                        w.Sw.Flush();
+                    }
+
+                }
+                current = 0;
+            }
+
+        }
+
+
         // XOR 분류를 실행해보자
         // XOR 분류는 AND나 OR과는 달리 비선형 분류에 해당한다.
         // 입력층과 출력층으로만 구성된 단순한 유전자는 단지 선형 분류만을 수행하기 때문에 XOR 분류를 해결하지 못한다.

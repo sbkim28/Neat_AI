@@ -108,7 +108,7 @@ namespace NeatAlgorithm.NEAT
         // 초기 값들을 설정함
         public Pool(int inputs, int outputs, Random random)
         {
-            Inputs = inputs + 1; // +1의 이유는 bias node를 고려하는 것
+            Inputs = inputs + 1; 
             Outputs = outputs;
             MaxNodes = 1000000;
             Population = 300;
@@ -173,6 +173,8 @@ namespace NeatAlgorithm.NEAT
         // 5) 새로운 자식들을 기존의 종에 추가함.
         public void Evaluate()
         {
+            TopFitness = long.MinValue;
+            BestGenome = null;
             if (Writer != null) Writer.Record();
             // 과정 1)
             while (true)
@@ -183,10 +185,11 @@ namespace NeatAlgorithm.NEAT
                 insw.Reset();
                 insw.Start();
                 g.Fitness = Agent.Evaluate(g, DataDictionary);
+                g.Checked = true;
                 insw.Stop();
                 g.ExecutionTime = insw.ElapsedMilliseconds;
 
-                g.AdjustedFitness = (double)g.Fitness / Species[speciesCursor].Genomes.Count;
+                g.AdjustedFitness = (double) g.Fitness  / Species[speciesCursor].Genomes.Count;
 
                 Species[speciesCursor].AddFitness(g.AdjustedFitness);
                 if (g.Fitness > TopFitness)
@@ -223,10 +226,7 @@ namespace NeatAlgorithm.NEAT
                     Writer.WriteSpecies(Species, DataDictionary);
                 }
             }
-            if (DataDictionary != null)
-            {
-                DataDictionary.Clear();
-            }
+            DataDictionary.Clear();
 
             sw.Reset();
             sw.Start();
@@ -324,6 +324,8 @@ namespace NeatAlgorithm.NEAT
                 }
                 s.Genomes.RemoveRange(0, cut);
                 s.Genomes[0].Fitness = 0;
+                s.Genomes[0].Checked = false;
+                // to fix;
             }
             
             // 과정 5) 새로 만들어진 자식 종을 추가함
@@ -331,8 +333,6 @@ namespace NeatAlgorithm.NEAT
                 AddToSpecies(g);
             }
             
-            TopFitness = long.MinValue;
-            BestGenome = null;
             sw.Stop();
             if (Writer != null)
             {
@@ -389,7 +389,7 @@ namespace NeatAlgorithm.NEAT
         // 현재 Cursor가 나타내는 종이 적합도가 측정되었는지 확인
         public bool IsFitnessMeasured()
         {
-            return GetCurrentGenome().Fitness != 0;
+            return GetCurrentGenome().Checked;
         }
 
         // Cursor 값을 바탕으로 현재 종을 가져옮

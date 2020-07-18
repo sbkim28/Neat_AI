@@ -15,6 +15,9 @@ namespace NeatAlgorithm.NEAT
         public List<Gene> Genes { get; private set; }
         // 개체의 적합도
         public long Fitness { get; set; }
+
+        public bool Checked { get; set; }
+
         public double AdjustedFitness { get; set; }
         // 개체가 만들어진 세대
         public int FromGeneration { get; set; }
@@ -36,6 +39,7 @@ namespace NeatAlgorithm.NEAT
             Genes = new List<Gene>();
             FromGeneration = pool.Generation;
             GenomeId = pool.NewGenome();
+            Checked = false;
         }
 
         public Genome Clone()
@@ -116,7 +120,15 @@ namespace NeatAlgorithm.NEAT
                 }
                 if (n.Incomings.Count > 0)
                 {
-                    n.value = Util.MathUtils.Sigmoid(sum);
+                    if (key >= Pool.MaxNodes)
+                    {
+                        n.value = sum;
+                        //n.value = Util.MathUtils.Sigmoid(sum); // check;
+                    }
+                    else
+                    {
+                        n.value = Util.MathUtils.ReLU(sum);
+                    }
                 }
             }
 

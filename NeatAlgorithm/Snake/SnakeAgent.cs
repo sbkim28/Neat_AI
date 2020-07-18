@@ -10,6 +10,8 @@ using System.Diagnostics;
 
 namespace NeatAlgorithm.Snake
 {
+    public delegate void Draw();
+
     public class SnakeAgent : IAgent
     {
         public int X { get; set; }
@@ -18,21 +20,25 @@ namespace NeatAlgorithm.Snake
         public LinkedList<Square> Snake { get; private set; }
         public Square Food { get; set; }
         public int Execute { get; set; }
+        public int DisplayDelay { get; set; }
         
         private Random random;
         
-
         public int Hunger { get; private set; }
         public int LifeTime { get; private set; }
         public int Score { get; private set; }
 
-        public bool Gameover { get; private set; }
+        public bool Gameover { get; set; }
+        public Draw Drawer { get; set; }
+
 
         public SnakeAgent(int x, int y, Random random)
         {
             X = x; Y = y;
             this.random = random;
             Execute = 1;
+            Drawer = new Draw(ConsoleDraw);
+            DisplayDelay = 25;
         }
 
         public void Initialize()
@@ -46,7 +52,8 @@ namespace NeatAlgorithm.Snake
             Snake.AddFirst(new Square(midX, midY));
             Snake.AddFirst(new Square(midX, midY + 1));
             Hunger = 256;
-            CreateFood(random);
+            if(random != null)
+                CreateFood(random);
             LifeTime = 0;
             Score = 0;
         }
@@ -60,6 +67,7 @@ namespace NeatAlgorithm.Snake
             Food = foodNode.Value;
             while (!Gameover)
             {
+                //ConsoleDraw();
                 double[] output = g.EvaluateNetwork(GetInputs());
                 double max = output[0];
                 int index = 0;
@@ -78,30 +86,30 @@ namespace NeatAlgorithm.Snake
                     foodNode = foodNode.Next;
                     Food = foodNode.Value;
                 }
-                Draw(g);
+                Drawer();
+                Thread.Sleep(DisplayDelay);
 
             }
-            Console.WriteLine("END");
-            Thread.Sleep(1000);
+            //Console.WriteLine("END");
         }
 
         public const string SNAKE_BLOCK = "■";
         public const string EMPTY_BLOCK = "□";
 
-        public void Draw(Genome g)
+        private void ConsoleDraw()
         {
             int[,] cells = new int[X, Y];
             foreach (Square s in Snake)
             {
-                cells[s.X, s.Y] = -1;
+                cells[s.Y, s.X] = -1;
             }
-            cells[Food.X, Food.Y] = 1;
+            cells[Food.Y, Food.X] = 1;
 
 
             Console.Clear();
-            Console.WriteLine("Gen :" + g.Pool.Generation + ", Gene : " + g.GenomeId + "");
+           /* Console.WriteLine("Gen :" + g.Pool.Generation + ", Gene : " + g.GenomeId + "");
             Console.WriteLine("Score :" + Score + ", Hunger : " + Hunger + "");
-            Console.WriteLine("Max_Fitness :" + g.Pool.BestGenome.Fitness + ", Species : " + g.Pool.Species.Count + ", Population : " + g.Pool.Population);
+            Console.WriteLine("Max_Fitness :" + g.Pool.BestGenome.Fitness + ", Species : " + g.Pool.Species.Count + ", Population : " + g.Pool.Population);*/
             Console.WriteLine("Play of Best Genome");
             
             for (int i = 0; i < Y; ++i)
@@ -124,7 +132,6 @@ namespace NeatAlgorithm.Snake
                 }
                 Console.WriteLine();
             }
-            Thread.Sleep(25);
         }
 
         public double[] GetInputs()
@@ -202,7 +209,7 @@ namespace NeatAlgorithm.Snake
             SnakeDataDictionary fdd =  dd as SnakeDataDictionary;
             fdd.CreateLifetime(g.GenomeId, Execute);
             fdd.CreateScore(g.GenomeId, Execute);
-            long best = 0;
+            long best = long.MinValue ;
             long sum = 0;
             for (int k = 0; k < Execute; ++k)
             {
@@ -320,8 +327,10 @@ namespace NeatAlgorithm.Snake
             }
 
             --Hunger;
-            if (Hunger <= 0) Gameover = true;
-            
+            if (Hunger <= 0)
+            {
+                Gameover = true;
+            }
             ++LifeTime;
         }
 
@@ -338,8 +347,9 @@ namespace NeatAlgorithm.Snake
                 fitness *= 2048;
                 fitness *= Score - 9; 
             }*/
-            fitness = LifeTime + 256 * Score * Score;
-            return fitness + 1;
+            fitness = 256 * Score * Score + LifeTime;
+
+            return fitness;
         }
 
         public void CreateFood(Random r)
@@ -349,8 +359,7 @@ namespace NeatAlgorithm.Snake
             {
                 cells.Add(s.X + s.Y * X);
             }
-            
-            int index = r.Next(X * Y - cells.Count);
+            int index = r == null ? 0 : r.Next(X * Y - cells.Count);
             bool flag = false;
             for (int i = 0; i < X * Y; ++i)
             {

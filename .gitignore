@@ -1,9 +1,10 @@
 NeatAlgorithm/obj/
 NeatAlgorithm/bin/
-NeatAlgorithm/Data/
-NeatAlgorithm/Snake/SnakeForm.cs
-NeatAlgorithm/Snake/SnakeForm.Designer.cs
-NeatAlgorithm/Snake/SnakeForm.resx
+
+NeatAlgorithm/Data/ExcelDataEditor.cs
+NeatAlgorithm/Data/ExcelDataWriter.cs
+NeatAlgorithm/Data/DataReader.cs
+
 NeatAlgorithm/Properties/
 NeatAlgorithm/App.config
 NeatAlgorithm/NeatAlgorithm.csproj
