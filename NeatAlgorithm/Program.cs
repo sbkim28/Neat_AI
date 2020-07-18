@@ -20,8 +20,11 @@ namespace NeatAlgorithm
         {
             
             Random r = new Random();
-            SnakeForm sf = new SnakeForm();
-            System.Windows.Forms.Application.Run(sf);
+            AnalyzeForm af = new AnalyzeForm();
+            System.Windows.Forms.Application.Run(af);
+
+            //SnakeForm sf = new SnakeForm();
+            //System.Windows.Forms.Application.Run(sf);
             //Snake(r);
         }
 

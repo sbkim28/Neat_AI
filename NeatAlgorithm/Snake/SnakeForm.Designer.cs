@@ -52,10 +52,12 @@
             this.LblSpeed = new System.Windows.Forms.Label();
             this.InputSpeed = new System.Windows.Forms.NumericUpDown();
             this.BtnStop = new System.Windows.Forms.Button();
+            this.NetworkBox = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.SnakeBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.InputGen)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ChartTopScore)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.InputSpeed)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NetworkBox)).BeginInit();
             this.SuspendLayout();
             // 
             // SnakeBox
@@ -91,7 +93,7 @@
             this.Filename.Font = new System.Drawing.Font("바탕", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.Filename.Location = new System.Drawing.Point(411, 17);
             this.Filename.Name = "Filename";
-            this.Filename.Size = new System.Drawing.Size(301, 21);
+            this.Filename.Size = new System.Drawing.Size(313, 21);
             this.Filename.TabIndex = 2;
             // 
             // LblGenInput
@@ -107,7 +109,7 @@
             // InputGen
             // 
             this.InputGen.Enabled = false;
-            this.InputGen.Location = new System.Drawing.Point(393, 48);
+            this.InputGen.Location = new System.Drawing.Point(392, 45);
             this.InputGen.Maximum = new decimal(new int[] {
             0,
             0,
@@ -239,7 +241,7 @@
             // 
             this.BtnPlay.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.BtnPlay.Enabled = false;
-            this.BtnPlay.Location = new System.Drawing.Point(647, 47);
+            this.BtnPlay.Location = new System.Drawing.Point(659, 45);
             this.BtnPlay.Name = "BtnPlay";
             this.BtnPlay.Size = new System.Drawing.Size(65, 22);
             this.BtnPlay.TabIndex = 10;
@@ -255,9 +257,9 @@
             chartArea1.Position.Width = 100F;
             chartArea1.Position.Y = 5F;
             this.ChartTopScore.ChartAreas.Add(chartArea1);
-            this.ChartTopScore.Location = new System.Drawing.Point(343, 134);
+            this.ChartTopScore.Location = new System.Drawing.Point(354, 100);
             this.ChartTopScore.Name = "ChartTopScore";
-            this.ChartTopScore.Size = new System.Drawing.Size(369, 198);
+            this.ChartTopScore.Size = new System.Drawing.Size(370, 179);
             this.ChartTopScore.TabIndex = 11;
             this.ChartTopScore.Text = "Top Score";
             // 
@@ -265,7 +267,7 @@
             // 
             this.LblSpeed.AutoSize = true;
             this.LblSpeed.Font = new System.Drawing.Font("바탕", 9F);
-            this.LblSpeed.Location = new System.Drawing.Point(341, 85);
+            this.LblSpeed.Location = new System.Drawing.Point(341, 77);
             this.LblSpeed.Name = "LblSpeed";
             this.LblSpeed.Size = new System.Drawing.Size(45, 12);
             this.LblSpeed.TabIndex = 4;
@@ -278,7 +280,7 @@
             0,
             0,
             0});
-            this.InputSpeed.Location = new System.Drawing.Point(393, 83);
+            this.InputSpeed.Location = new System.Drawing.Point(392, 72);
             this.InputSpeed.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -302,7 +304,7 @@
             // BtnStop
             // 
             this.BtnStop.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.BtnStop.Location = new System.Drawing.Point(647, 75);
+            this.BtnStop.Location = new System.Drawing.Point(659, 73);
             this.BtnStop.Name = "BtnStop";
             this.BtnStop.Size = new System.Drawing.Size(65, 22);
             this.BtnStop.TabIndex = 10;
@@ -310,11 +312,21 @@
             this.BtnStop.UseVisualStyleBackColor = true;
             this.BtnStop.Click += new System.EventHandler(this.BtnStop_Click);
             // 
+            // NetworkBox
+            // 
+            this.NetworkBox.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.NetworkBox.Location = new System.Drawing.Point(354, 285);
+            this.NetworkBox.Name = "NetworkBox";
+            this.NetworkBox.Size = new System.Drawing.Size(370, 200);
+            this.NetworkBox.TabIndex = 12;
+            this.NetworkBox.TabStop = false;
+            // 
             // SnakeForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(752, 496);
+            this.Controls.Add(this.NetworkBox);
             this.Controls.Add(this.ChartTopScore);
             this.Controls.Add(this.BtnStop);
             this.Controls.Add(this.BtnPlay);
@@ -344,6 +356,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.InputGen)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ChartTopScore)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.InputSpeed)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NetworkBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -374,5 +387,6 @@
         private System.Windows.Forms.Label LblSpeed;
         private System.Windows.Forms.NumericUpDown InputSpeed;
         private System.Windows.Forms.Button BtnStop;
+        private System.Windows.Forms.PictureBox NetworkBox;
     }
 }
