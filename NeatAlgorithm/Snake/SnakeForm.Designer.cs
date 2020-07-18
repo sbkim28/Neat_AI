@@ -29,8 +29,6 @@
         private void InitializeComponent()
         {
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.SnakeBox = new System.Windows.Forms.PictureBox();
             this.DataFile = new System.Windows.Forms.OpenFileDialog();
             this.BtnLoad = new System.Windows.Forms.Button();
@@ -50,13 +48,13 @@
             this.LblHunger = new System.Windows.Forms.Label();
             this.LblHungerValue = new System.Windows.Forms.Label();
             this.BtnPlay = new System.Windows.Forms.Button();
-            this.TopScore = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.ChartTopScore = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.LblSpeed = new System.Windows.Forms.Label();
             this.InputSpeed = new System.Windows.Forms.NumericUpDown();
             this.BtnStop = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.SnakeBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.InputGen)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.TopScore)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ChartTopScore)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.InputSpeed)).BeginInit();
             this.SuspendLayout();
             // 
@@ -78,6 +76,7 @@
             // 
             // BtnLoad
             // 
+            this.BtnLoad.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.BtnLoad.Font = new System.Drawing.Font("바탕", 9F);
             this.BtnLoad.Location = new System.Drawing.Point(338, 12);
             this.BtnLoad.Name = "BtnLoad";
@@ -238,6 +237,7 @@
             // 
             // BtnPlay
             // 
+            this.BtnPlay.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.BtnPlay.Enabled = false;
             this.BtnPlay.Location = new System.Drawing.Point(647, 47);
             this.BtnPlay.Name = "BtnPlay";
@@ -247,21 +247,19 @@
             this.BtnPlay.UseVisualStyleBackColor = true;
             this.BtnPlay.Click += new System.EventHandler(this.BtnPlay_Click);
             // 
-            // TopScore
+            // ChartTopScore
             // 
             chartArea1.Name = "ChartArea1";
-            this.TopScore.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.TopScore.Legends.Add(legend1);
-            this.TopScore.Location = new System.Drawing.Point(393, 191);
-            this.TopScore.Name = "TopScore";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.TopScore.Series.Add(series1);
-            this.TopScore.Size = new System.Drawing.Size(300, 198);
-            this.TopScore.TabIndex = 11;
-            this.TopScore.Text = "Top Score";
+            chartArea1.Position.Auto = false;
+            chartArea1.Position.Height = 90F;
+            chartArea1.Position.Width = 100F;
+            chartArea1.Position.Y = 5F;
+            this.ChartTopScore.ChartAreas.Add(chartArea1);
+            this.ChartTopScore.Location = new System.Drawing.Point(343, 134);
+            this.ChartTopScore.Name = "ChartTopScore";
+            this.ChartTopScore.Size = new System.Drawing.Size(369, 198);
+            this.ChartTopScore.TabIndex = 11;
+            this.ChartTopScore.Text = "Top Score";
             // 
             // LblSpeed
             // 
@@ -303,6 +301,7 @@
             // 
             // BtnStop
             // 
+            this.BtnStop.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.BtnStop.Location = new System.Drawing.Point(647, 75);
             this.BtnStop.Name = "BtnStop";
             this.BtnStop.Size = new System.Drawing.Size(65, 22);
@@ -316,7 +315,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(752, 496);
-            this.Controls.Add(this.TopScore);
+            this.Controls.Add(this.ChartTopScore);
             this.Controls.Add(this.BtnStop);
             this.Controls.Add(this.BtnPlay);
             this.Controls.Add(this.LblGen);
@@ -343,7 +342,7 @@
             this.Load += new System.EventHandler(this.SnakeForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.SnakeBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.InputGen)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.TopScore)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ChartTopScore)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.InputSpeed)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -371,7 +370,7 @@
         private System.Windows.Forms.Label LblHunger;
         private System.Windows.Forms.Label LblHungerValue;
         private System.Windows.Forms.Button BtnPlay;
-        private System.Windows.Forms.DataVisualization.Charting.Chart TopScore;
+        private System.Windows.Forms.DataVisualization.Charting.Chart ChartTopScore;
         private System.Windows.Forms.Label LblSpeed;
         private System.Windows.Forms.NumericUpDown InputSpeed;
         private System.Windows.Forms.Button BtnStop;

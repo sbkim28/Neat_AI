@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace NeatAlgorithm.Snake
 {
@@ -28,6 +29,7 @@ namespace NeatAlgorithm.Snake
             InitializeComponent();
             sa = new SnakeAgent(16,16, null);
             isPlaying = false;
+            ChartTopScore.Series.Clear();
         }
 
         private void BtnLoad_Click(object sender, EventArgs e)
@@ -53,10 +55,32 @@ namespace NeatAlgorithm.Snake
                 Filename.Text = ofd.FileName;
                 ReadFile(ofd.FileName);
                 BtnPlay.Enabled = true;
+                DrawTopScore();
             }
         }
 
         
+        public void DrawTopScore()
+        {
+            ChartTopScore.Series.Clear();
+            Series series = ChartTopScore.Series.Add("Top Score");
+            series.ChartType = SeriesChartType.Line;
+            int gen = 0;
+            foreach(Genome g in reader.Best)
+            {
+                long[] score = sdd.GetScore(g.GenomeId);
+                long best = score[0];
+                for(int i = 1; i < score.Length; ++i)
+                {
+                    if(score[i] > best)
+                    {
+                        best = score[i];
+                    }
+                }
+                series.Points.AddXY(++gen, best);
+            }
+        }
+
         private void BtnPlay_Click(object sender, EventArgs e)
         {
             if (isPlaying) return;
