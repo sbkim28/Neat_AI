@@ -101,6 +101,11 @@ namespace NeatAlgorithm.NEAT
             {
                 throw new ArgumentException("Incorrect number of inputs");
             }
+            List<int> keys = new List<int>(Network.Keys);
+            foreach(int key in keys)
+            {
+                Network[key].value = 0;
+            }
 
             for (int i = 0; i < input.Length; ++i)
             {
@@ -108,7 +113,7 @@ namespace NeatAlgorithm.NEAT
             }
             Network[input.Length].value = 1;
 
-            List<int> keys = new List<int>(Network.Keys);
+
             keys.Sort();
             foreach (int key in keys)
             {
@@ -136,10 +141,6 @@ namespace NeatAlgorithm.NEAT
             for (int i = 0; i < Pool.Outputs; ++i)
             {
                 outputs[i] = Network[Pool.MaxNodes + i].value;
-            }
-            foreach(int key in keys)
-            {
-                Network[key].value = 0;
             }
             return outputs;
 

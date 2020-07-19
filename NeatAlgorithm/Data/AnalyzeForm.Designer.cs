@@ -43,11 +43,27 @@
             this.LblState = new System.Windows.Forms.Label();
             this.BtnDraw = new System.Windows.Forms.Button();
             this.BtnCancel = new System.Windows.Forms.Button();
+            this.LblBest = new System.Windows.Forms.Label();
+            this.LblGen = new System.Windows.Forms.Label();
+            this.LblWhere = new System.Windows.Forms.Label();
+            this.LblData = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.Graph)).BeginInit();
             this.SuspendLayout();
             // 
             // Graph
             // 
+            chartArea1.AxisX.MajorGrid.Interval = 50D;
+            chartArea1.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
+            chartArea1.AxisX.Minimum = 0D;
+            chartArea1.AxisX.MinorGrid.Enabled = true;
+            chartArea1.AxisX.MinorGrid.Interval = 25D;
+            chartArea1.AxisX.MinorGrid.LineColor = System.Drawing.Color.Gray;
+            chartArea1.AxisX.MinorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            chartArea1.AxisX.ScaleBreakStyle.StartFromZero = System.Windows.Forms.DataVisualization.Charting.StartFromZero.No;
+            chartArea1.AxisY.Interval = 10D;
+            chartArea1.AxisY.MajorGrid.Interval = 10D;
+            chartArea1.AxisY.MinorGrid.Enabled = true;
+            chartArea1.AxisY.MinorGrid.Interval = 5D;
             chartArea1.Name = "CharArea";
             this.Graph.ChartAreas.Add(chartArea1);
             this.Graph.Location = new System.Drawing.Point(13, 13);
@@ -196,6 +212,45 @@
             this.BtnCancel.UseVisualStyleBackColor = true;
             this.BtnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
+            // LblBest
+            // 
+            this.LblBest.AutoSize = true;
+            this.LblBest.Font = new System.Drawing.Font("바탕", 9F);
+            this.LblBest.Location = new System.Drawing.Point(858, 143);
+            this.LblBest.Name = "LblBest";
+            this.LblBest.Size = new System.Drawing.Size(67, 12);
+            this.LblBest.TabIndex = 5;
+            this.LblBest.Text = "Best : Gen";
+            // 
+            // LblGen
+            // 
+            this.LblGen.AutoSize = true;
+            this.LblGen.Font = new System.Drawing.Font("바탕", 9F);
+            this.LblGen.Location = new System.Drawing.Point(931, 143);
+            this.LblGen.Name = "LblGen";
+            this.LblGen.Size = new System.Drawing.Size(11, 12);
+            this.LblGen.TabIndex = 5;
+            this.LblGen.Text = "0";
+            // 
+            // LblWhere
+            // 
+            this.LblWhere.AutoSize = true;
+            this.LblWhere.Font = new System.Drawing.Font("바탕", 9F);
+            this.LblWhere.Location = new System.Drawing.Point(961, 143);
+            this.LblWhere.Name = "LblWhere";
+            this.LblWhere.Size = new System.Drawing.Size(17, 12);
+            this.LblWhere.TabIndex = 5;
+            this.LblWhere.Text = "in";
+            // 
+            // LblData
+            // 
+            this.LblData.AutoSize = true;
+            this.LblData.Font = new System.Drawing.Font("바탕", 9F);
+            this.LblData.Location = new System.Drawing.Point(991, 143);
+            this.LblData.Name = "LblData";
+            this.LblData.Size = new System.Drawing.Size(0, 12);
+            this.LblData.TabIndex = 5;
+            // 
             // AnalyzeForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -209,6 +264,10 @@
             this.Controls.Add(this.LblCurrentValue);
             this.Controls.Add(this.Progress);
             this.Controls.Add(this.LblY);
+            this.Controls.Add(this.LblGen);
+            this.Controls.Add(this.LblData);
+            this.Controls.Add(this.LblWhere);
+            this.Controls.Add(this.LblBest);
             this.Controls.Add(this.LblX);
             this.Controls.Add(this.DmnY);
             this.Controls.Add(this.DmnX);
@@ -239,5 +298,9 @@
         private System.Windows.Forms.Label LblState;
         private System.Windows.Forms.Button BtnDraw;
         private System.Windows.Forms.Button BtnCancel;
+        private System.Windows.Forms.Label LblBest;
+        private System.Windows.Forms.Label LblGen;
+        private System.Windows.Forms.Label LblWhere;
+        private System.Windows.Forms.Label LblData;
     }
 }

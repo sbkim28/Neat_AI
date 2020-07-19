@@ -23,8 +23,8 @@ namespace NeatAlgorithm
             AnalyzeForm af = new AnalyzeForm();
             System.Windows.Forms.Application.Run(af);
 
-            //GameForm sf = new GameForm();
-            //System.Windows.Forms.Application.Run(sf);
+           // GameForm sf = new GameForm();
+           // System.Windows.Forms.Application.Run(sf);
             //Snake(r);
         }
 

@@ -70,6 +70,10 @@ namespace NeatAlgorithm.NEAT
             Series series = ChartTopScore.Series.Add("Top Score");
             series.ChartType = SeriesChartType.Line;
             int gen = 0;
+
+            int bestGen = 0;
+            int bestOfAll = 0;
+
             foreach(Genome g in reader.Best)
             {
                 int[] score = dd.GetScore(g.GenomeId);
@@ -81,13 +85,21 @@ namespace NeatAlgorithm.NEAT
                         best = score[i];
                     }
                 }
-                series.Points.AddXY(++gen, best);
+                if(best > bestOfAll)
+                {
+                    bestGen = gen;
+                    bestOfAll = best;
+                }
+                series.Points.AddXY(gen++, best);
             }
+
+            LblBestWhere.Text = "" + bestGen;
         }
 
         private void BtnPlay_Click(object sender, EventArgs e)
         {
             if (isPlaying) return;
+            
             agent.Drawer = new Draw(Draw);
             agent.DisplayDelay = (int) InputSpeed.Value;
             isPlaying = true;
@@ -115,7 +127,11 @@ namespace NeatAlgorithm.NEAT
                 isPlaying = false;
                 return;
             }
-            SnakeBox.Invalidate();
+            BeginInvoke((Action)    (()=>{
+                SnakeBox.Invalidate();
+                NetworkBox.Invalidate();
+
+            }));
         }
         
         private void ReadFile(string file)
@@ -126,11 +142,6 @@ namespace NeatAlgorithm.NEAT
             InputGen.Maximum = reader.Gen;
             InputGen.Minimum = 0;
             InputGen.Value = 0;
-
-        }
-
-        private void SnakeForm_Load(object sender, EventArgs e)
-        {
 
         }
 
@@ -169,10 +180,151 @@ namespace NeatAlgorithm.NEAT
                     }
                 }
             }
+        }
+        private void UpdateTopology(object sender, PaintEventArgs e)
+        {
+            if (!isPlaying) return;
+            Graphics canvas = e.Graphics;
+            Genome g = agent.Current;
 
+            int outlength = 0;
+            int highOut = 0 ;
+            double highVal = double.MinValue;
 
+            Pen border = Pens.Black;
+            foreach(int index in g.Network.Keys)
+            {
+                Node n = g.Network[index];
+                double map = Math.Atan(n.value);
+
+                map *= 2.0 / Math.PI;
+                
+                if(index < g.Pool.Inputs)
+                {
+                    Brush color = new SolidBrush(Color.FromArgb(64, 64 + (int)( map * 64), 64 + (int)(map * 190) ));
+                    int x = 5;
+                    int y = 10;
+
+                    y += index * 20;
+                    while(y > 180)
+                    {
+                        x += 20;
+                        y -= 180;
+                    }
+
+                    canvas.FillEllipse(color, new Rectangle(x, y, 15, 15));
+                    canvas.DrawEllipse(border, new Rectangle(x, y, 15, 15));
+
+                } else if(index < g.Pool.MaxNodes)
+                {
+                    Brush color = new SolidBrush(Color.FromArgb(64, 64 + (int)(map * 64), 64 + (int)(map * 190)));
+                    int x = 125;
+                    int y = 10;
+                    y += (index - g.Pool.Inputs)* 20;
+                    while (y > 180)
+                    {
+                        x += 20;
+                        y -= 180;
+                    }
+                    
+                    foreach (Gene con in n.Incomings)
+                    {
+                        double weight = Math.Atan(con.Weight);
+                        weight *= 2.0 / Math.PI;
+                        Pen p = new Pen(Color.FromArgb(128 - (int)(weight * 120), 128 + (int)(weight * 120), 0));
+                        int cx;
+                        int cy = 10;
+                        if (con.In < g.Pool.Inputs)
+                        {
+                            cx = 5;
+                            cy += con.In * 20;
+                            while (cy > 180)
+                            {
+                                cx += 20;
+                                cy -= 180;
+                            }
+                        }
+                        else
+                        {
+                            cx = 125;
+                            cy += (con.In - g.Pool.Inputs) * 20;
+                            while (cy > 180)
+                            {
+                                cx += 20;
+                                cy -= 180;
+                            }
+                        }
+                        canvas.DrawLine(p, cx + 15, cy + 7, x, y + 7);
+                    }
+
+                    canvas.FillEllipse(color, new Rectangle(x, y, 15, 15));
+                    canvas.DrawEllipse(border, new Rectangle(x, y, 15, 15));
+
+                }
+                else
+                {
+                    if(highVal < n.value)
+                    {
+                        highOut = outlength;
+                        highVal = n.value;
+                    }
+                    outlength++;
+                }
+                
+            }
+
+            int outx = 350;
+            int outy = (200 - (20 * outlength - 5)) / 2;
+            for(int i = 0; i < outlength; ++i)
+            {
+                Node n = g.Network[i + g.Pool.MaxNodes];
+                int x = outx;
+                int y = outy + i * 20;
+                if(i == highOut)
+                {
+                    canvas.FillEllipse(Brushes.Green, new Rectangle(x, y, 15, 15));
+                }
+                else
+                {
+                    canvas.FillEllipse(Brushes.Gray, new Rectangle(x, y, 15, 15));
+                }
+
+                foreach (Gene con in n.Incomings)
+                {
+                    double weight = Math.Atan(con.Weight);
+                    weight *= 2.0 / Math.PI;
+                    Pen p = new Pen(Color.FromArgb(128 - (int)(weight * 120), 128 + (int)(weight * 120), 0));
+                    int cx;
+                    int cy = 10;
+                    if (con.In < g.Pool.Inputs)
+                    {
+                        cx = 5;
+                        cy += con.In * 20;
+                        while (cy > 180)
+                        {
+                            cx += 20;
+                            cy -= 180;
+                        }
+                    }
+                    else
+                    {
+                        cx = 125;
+                        cy += (con.In - g.Pool.Inputs) * 20;
+                        while (cy > 180)
+                        {
+                            cx += 20;
+                            cy -= 180;
+                        }
+                    }
+                    canvas.DrawLine(p, cx + 15, cy + 7, x, y + 7);
+                }
+
+                canvas.DrawEllipse(border, new Rectangle(x, y, 15, 15));
+            }
 
         }
+
+        
 
         private void BtnStop_Click(object sender, EventArgs e)
         {
@@ -183,5 +335,6 @@ namespace NeatAlgorithm.NEAT
                 agent.Gameover = true;
             }
         }
+
     }
 }

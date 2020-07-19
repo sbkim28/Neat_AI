@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.SnakeBox = new System.Windows.Forms.PictureBox();
             this.DataFile = new System.Windows.Forms.OpenFileDialog();
             this.BtnLoad = new System.Windows.Forms.Button();
@@ -53,6 +53,8 @@
             this.InputSpeed = new System.Windows.Forms.NumericUpDown();
             this.BtnStop = new System.Windows.Forms.Button();
             this.NetworkBox = new System.Windows.Forms.PictureBox();
+            this.LblBest = new System.Windows.Forms.Label();
+            this.LblBestWhere = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.SnakeBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.InputGen)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ChartTopScore)).BeginInit();
@@ -251,12 +253,14 @@
             // 
             // ChartTopScore
             // 
-            chartArea1.Name = "ChartArea1";
-            chartArea1.Position.Auto = false;
-            chartArea1.Position.Height = 90F;
-            chartArea1.Position.Width = 100F;
-            chartArea1.Position.Y = 5F;
-            this.ChartTopScore.ChartAreas.Add(chartArea1);
+            chartArea2.AxisX.Minimum = 0D;
+            chartArea2.AxisY.MajorGrid.Interval = 10D;
+            chartArea2.Name = "ChartArea1";
+            chartArea2.Position.Auto = false;
+            chartArea2.Position.Height = 90F;
+            chartArea2.Position.Width = 100F;
+            chartArea2.Position.Y = 5F;
+            this.ChartTopScore.ChartAreas.Add(chartArea2);
             this.ChartTopScore.Location = new System.Drawing.Point(354, 100);
             this.ChartTopScore.Name = "ChartTopScore";
             this.ChartTopScore.Size = new System.Drawing.Size(370, 179);
@@ -320,8 +324,28 @@
             this.NetworkBox.Size = new System.Drawing.Size(370, 200);
             this.NetworkBox.TabIndex = 12;
             this.NetworkBox.TabStop = false;
+            this.NetworkBox.Paint += new System.Windows.Forms.PaintEventHandler(this.UpdateTopology);
             // 
-            // SnakeForm
+            // LblBest
+            // 
+            this.LblBest.AutoSize = true;
+            this.LblBest.Font = new System.Drawing.Font("바탕", 9F);
+            this.LblBest.Location = new System.Drawing.Point(518, 50);
+            this.LblBest.Name = "LblBest";
+            this.LblBest.Size = new System.Drawing.Size(35, 12);
+            this.LblBest.TabIndex = 4;
+            this.LblBest.Text = "Best:";
+            // 
+            // LblBestWhere
+            // 
+            this.LblBestWhere.AutoSize = true;
+            this.LblBestWhere.Font = new System.Drawing.Font("바탕", 9F);
+            this.LblBestWhere.Location = new System.Drawing.Point(559, 50);
+            this.LblBestWhere.Name = "LblBestWhere";
+            this.LblBestWhere.Size = new System.Drawing.Size(0, 12);
+            this.LblBestWhere.TabIndex = 4;
+            // 
+            // GameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -345,13 +369,14 @@
             this.Controls.Add(this.InputSpeed);
             this.Controls.Add(this.InputGen);
             this.Controls.Add(this.LblSpeed);
+            this.Controls.Add(this.LblBestWhere);
+            this.Controls.Add(this.LblBest);
             this.Controls.Add(this.LblGenInput);
             this.Controls.Add(this.Filename);
             this.Controls.Add(this.BtnLoad);
             this.Controls.Add(this.SnakeBox);
-            this.Name = "SnakeForm";
+            this.Name = "GameForm";
             this.Text = "SnakeForm";
-            this.Load += new System.EventHandler(this.SnakeForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.SnakeBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.InputGen)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ChartTopScore)).EndInit();
@@ -388,5 +413,7 @@
         private System.Windows.Forms.NumericUpDown InputSpeed;
         private System.Windows.Forms.Button BtnStop;
         private System.Windows.Forms.PictureBox NetworkBox;
+        private System.Windows.Forms.Label LblBest;
+        private System.Windows.Forms.Label LblBestWhere;
     }
 }

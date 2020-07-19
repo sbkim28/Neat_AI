@@ -26,10 +26,16 @@ namespace NeatAlgorithm.Data
         private string xVal;
         private string yVal;
         private int count;
+        private int bestOfAll;
+
+        private double[] means;
+        private double[] stdDevs;
 
         public AnalyzeForm()
         {
             InitializeComponent();
+            Graph.ChartAreas[0].AxisX.IntervalOffset = 0;
+            Graph.ChartAreas[0].AxisY.Interval = 10;
         }
 
         private void BtnLoad_Click(object sender, EventArgs e)
@@ -106,7 +112,7 @@ namespace NeatAlgorithm.Data
                     switch (xVal)
                     {
                         case "Generation":
-                            x = i+1;
+                            x = i;
                             break;
                         case "Top Score (Best)":
                             Genome g = reader.Best[i];
@@ -151,6 +157,14 @@ namespace NeatAlgorithm.Data
                             break;
 
                     }
+                    if(y > bestOfAll)
+                    {
+                        bestOfAll = y;
+                        FileInfo f = new FileInfo(reader.Filename);
+                        LblData.Text = f.Name;
+                        LblGen.Text = "" + x;
+
+                    }
                     Graph.Series[0].Points.AddXY(x, y);
 
                 }
@@ -163,22 +177,34 @@ namespace NeatAlgorithm.Data
             if (isDrawing)
             {
                 Series s = Graph.Series.Add("Means");
+                Series s1 = Graph.Series.Add("95citop");
+                Series s2 = Graph.Series.Add("95cibot");
+                Series s3 = Graph.Series.Add("999citop");
+                Series s4 = Graph.Series.Add("999cibot");
 
                 s.ChartType = SeriesChartType.Line;
                 s.Color = Color.Blue;
+                s1.ChartType = SeriesChartType.Line;
+                s1.Color = Color.Green;
+                s2.ChartType = SeriesChartType.Line;
+                s2.Color = Color.Green;
+                s3.ChartType = SeriesChartType.Line;
+                s3.Color = Color.Red;
+                s4.ChartType = SeriesChartType.Line;
+                s4.Color = Color.Red;
 
                 isDrawing = false;
                 LblState.Text = "Done";
-                double[] means = new double[300];
-                double[] stdDevs = new double[300];
-                
+                means = new double[300];
+                stdDevs = new double[300];
+
                 for (int i = 0; i < 300; ++i)
                 {
                     int index = 0;
                     DataPoint[] dps = new DataPoint[count];
                     foreach (DataPoint dp in Graph.Series[0].Points)
                     {
-                        if (dp.XValue == i + 1)
+                        if (dp.XValue == i )
                         {
                             dps[index++] = dp;
                         }
@@ -203,9 +229,13 @@ namespace NeatAlgorithm.Data
                     }
                     variation /= count - 1;
                     stdDevs[i] = Math.Sqrt(variation);
-                    s.Points.AddXY(i+1, means[i]);
-                }
+                    s.Points.AddXY(i , means[i]);
+                    s1.Points.AddXY(i , means[i] + 1.96 * stdDevs[i] / Math.Sqrt(count));
+                    s2.Points.AddXY(i , means[i] - 1.96 * stdDevs[i] / Math.Sqrt(count));
+                    s3.Points.AddXY(i, means[i] + 3.30 * stdDevs[i] / Math.Sqrt(count));
+                    s4.Points.AddXY(i, means[i] - 3.30 * stdDevs[i] / Math.Sqrt(count));
 
+                }
             }
         }
 
