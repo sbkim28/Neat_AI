@@ -9,16 +9,16 @@ namespace NeatAlgorithm.NEAT
     
     public abstract class DataDictionary
     {
-        private Dictionary<int, long[]> score;
+        private Dictionary<int, int[]> score;
         private Dictionary<int, int[]> lifetime;
 
         public DataDictionary()
         {
-            score = new Dictionary<int, long[]>();
+            score = new Dictionary<int, int[]>();
             lifetime = new Dictionary<int, int[]>();
         }
 
-        public long[] GetScore(int id)
+        public int[] GetScore(int id)
         {
             return score[id];
         }
@@ -48,10 +48,10 @@ namespace NeatAlgorithm.NEAT
         {
             if (score.ContainsKey(id)) return;
 
-            score.Add(id, new long[len]);
+            score.Add(id, new int[len]);
         }
 
-        public void AddScore(int id, long score, int index)
+        public void AddScore(int id, int score, int index)
         {
             this.score[id][index] = score;
         }

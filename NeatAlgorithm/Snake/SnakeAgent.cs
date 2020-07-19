@@ -10,33 +10,22 @@ using System.Diagnostics;
 
 namespace NeatAlgorithm.Snake
 {
-    public delegate void Draw();
-
-    public class SnakeAgent : IAgent
+    public class SnakeAgent : Agent
     {
         public int X { get; set; }
         public int Y { get; set; }
         public Direction previousMove;
         public LinkedList<Square> Snake { get; private set; }
         public Square Food { get; set; }
-        public int Execute { get; set; }
-        public int DisplayDelay { get; set; }
-        
-        private Random random;
         
         public int Hunger { get; private set; }
         public int LifeTime { get; private set; }
-        public int Score { get; private set; }
-
-        public bool Gameover { get; set; }
-        public Draw Drawer { get; set; }
+       
 
 
-        public SnakeAgent(int x, int y, Random random)
+        public SnakeAgent(int x, int y, Random random) : base(random)
         {
             X = x; Y = y;
-            this.random = random;
-            Execute = 1;
             Drawer = new Draw(ConsoleDraw);
             DisplayDelay = 25;
         }
@@ -59,8 +48,9 @@ namespace NeatAlgorithm.Snake
         }
         
 
-        public virtual void Display(Genome g, DataDictionary dd)
+        public override void Display(Genome g, DataDictionary dd)
         {
+            base.Display(g, dd);
             Initialize();
             LinkedList<Square> food = (dd as SnakeDataDictionary).GetFood(g.GenomeId);
             LinkedListNode<Square> foodNode = food.First;
@@ -204,7 +194,7 @@ namespace NeatAlgorithm.Snake
             return look;
         }
 
-        public long Evaluate(Genome g, DataDictionary dd)
+        public override long Evaluate(Genome g, DataDictionary dd)
         {
             SnakeDataDictionary fdd =  dd as SnakeDataDictionary;
             fdd.CreateLifetime(g.GenomeId, Execute);
@@ -347,7 +337,7 @@ namespace NeatAlgorithm.Snake
                 fitness *= 2048;
                 fitness *= Score - 9; 
             }*/
-            fitness = 256 * Score * Score + LifeTime;
+            fitness = 5 * Score * Score;
 
             return fitness;
         }
@@ -375,6 +365,11 @@ namespace NeatAlgorithm.Snake
             }
             if (!flag) Console.WriteLine("ILLEGAL");
 
+        }
+
+        public override string ToString()
+        {
+            return "Snake_" + X + "_" + Y; 
         }
     }
 }

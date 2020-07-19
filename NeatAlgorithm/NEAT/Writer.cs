@@ -33,7 +33,7 @@ namespace NeatAlgorithm.NEAT
 
         public void Start(Pool pool, int execute)
         {
-            Sw.WriteLine("\"Settings\":{\"Execution\":" + execute + ", \"Population\":" + pool.Population + ", \"DeltaThreshold\":" + pool.DeltaThreshold +
+            Sw.WriteLine("\"Settings\":{\"Game\":\"" + pool.Agent.ToString() +"\", \"Execution\":" + execute + ", \"Population\":" + pool.Population + ", \"DeltaThreshold\":" + pool.DeltaThreshold +
                 ", \"DeltaDisjoint\":" + pool.DeltaDisjoint + ", \"DeltaWeight\":" + pool.DeltaWeight + ", \"PerturbChance\":" + pool.PerturbChance + ", \"StepSize\":" + pool.StepSize +
                 ", \"LinkMutationChance\":" + pool.LinkMutationChance + ", \"ConnectionMutationChance\":" + pool.ConnectionMutationChance + ", \"NodeMutationChance\":" + pool.NodeMutationChance +
                 ", \"EnableMutationChance\":" + pool.EnableMutationChance + ", \"DisableMutationChance\":" + pool.DisableMutationChance + ", \"SurviveRate\":" + pool.SurviveRate + ", \"Staleness\":" + pool.Staleness + "}");
@@ -46,11 +46,11 @@ namespace NeatAlgorithm.NEAT
         }
 
 
-        private double GetDeviation(long[] scores, double avg)
+        private double GetDeviation(int[] scores, double avg)
         {
             double deviation = 0;
 
-            foreach (long s in scores)
+            foreach (int s in scores)
             {
                 deviation = (s - avg) * (s - avg);
             }
@@ -63,7 +63,7 @@ namespace NeatAlgorithm.NEAT
         public void Write(Genome g, DataDictionary dd)
         {
             sw.Stop();
-            long[] bestScores = dd.GetScore(g.GenomeId);
+            int[] bestScores = dd.GetScore(g.GenomeId);
 
             Species bestSpecies = null;
             Pool p = g.Pool;
@@ -75,10 +75,10 @@ namespace NeatAlgorithm.NEAT
                 foreach (Genome genomes in s.Genomes)
                 {
                     fitnessSum += genomes.Fitness;
-                    long[] scoreset = dd.GetScore(genomes.GenomeId);
-                    long best = 0;
+                    int[] scoreset = dd.GetScore(genomes.GenomeId);
+                    int best = 0;
                     double scoreAv = 0;
-                    foreach (long score in scoreset)
+                    foreach (int score in scoreset)
                     {
                         if (best < score) best = score;
                         scoreSum += score;
@@ -106,12 +106,12 @@ namespace NeatAlgorithm.NEAT
             Sw.WriteLine(sb.ToString());
         }
 
-        private void WriteGene(StringBuilder sb, Genome g, long[] scores)
+        private void WriteGene(StringBuilder sb, Genome g, int[] scores)
         {
 
             double avgScore = 0;
-            long topScore = 0;
-            foreach (long s in scores)
+            int topScore = 0;
+            foreach (int s in scores)
             {
                 avgScore += s;
                 if (s > topScore) topScore = s;
@@ -154,7 +154,7 @@ namespace NeatAlgorithm.NEAT
                         best = g;
                     }
                 }
-                long[] scores = dd.GetScore(best.GenomeId);
+                int[] scores = dd.GetScore(best.GenomeId);
 
                 sb.Append("{\"Id\":").Append(s.SpeciesId)
                     .Append(", \"Count\":").Append(s.Genomes.Count)

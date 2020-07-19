@@ -81,8 +81,7 @@ namespace NeatAlgorithm.Data
                     if (!isDrawing) return;
 
                     Reader reader = new Reader(file.FullName, 24,4);
-                    DataDictionary dd = new SnakeDataDictionary();
-                    reader.Read(dd);
+                    DataDictionary dd = reader.Read();
                     BeginInvoke((Action)(() => Proceed(reader, dd)));
                 }
                 BeginInvoke((Action)(() => Finish()));
@@ -101,7 +100,7 @@ namespace NeatAlgorithm.Data
                 LblCurrentValue.Text = "" + Progress.Value ;
 
                 
-                long x, y;
+                int x, y;
                 for (int i = 0; i <= reader.Gen; ++i) {
                     
                     switch (xVal)
@@ -111,8 +110,8 @@ namespace NeatAlgorithm.Data
                             break;
                         case "Top Score (Best)":
                             Genome g = reader.Best[i];
-                            long[] score = dd.GetScore(g.GenomeId);
-                            long best = score[0];
+                            int[] score = dd.GetScore(g.GenomeId);
+                            int best = score[0];
                             for(int j = 1; j < score.Length; ++j)
                             {
                                 if(score[j] > best)
@@ -135,8 +134,8 @@ namespace NeatAlgorithm.Data
 
                         case "Top Score (Best)":
                             Genome g = reader.Best[i];
-                            long[] score = dd.GetScore(g.GenomeId);
-                            long best = score[0];
+                            int[] score = dd.GetScore(g.GenomeId);
+                            int best = score[0];
                             for (int j = 1; j < score.Length; ++j)
                             {
                                 if (score[j] > best)

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace NeatAlgorithm.NEAT
 {
-    public interface IAgent
+    public interface GameFactory
     {
-        long Evaluate(Genome g, DataDictionary dd);
-        void Display(Genome g, DataDictionary dd);
+        Agent GetAgent(Random r);
+        DataDictionary GetDataDictionary();
     }
 }

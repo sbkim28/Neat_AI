@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace NeatAlgorithm.Pacman
 {
-    public class PacmanAgent : IAgent
+    public class PacmanAgent : Agent
     {
         
         public static readonly int[,] BasicCells = new int[,] { // y, x
@@ -50,23 +50,16 @@ namespace NeatAlgorithm.Pacman
 
         public int[,] Cells { get; private set; } // x 28 // y 31
         public int LeftDots { get; private set; }
-        public int Score { get; set; }
         public int Time { get; set; }
-
-
-        public int Execute { get; set; }
         
 
         public Ghost[] Ghosts { get; set; } // 0 for clyde, 1 for inky, 2 for pinky, 3 for blinky
         public Player Player { get; set; }
-        public Random random;
-        public bool Gameover { get; set; }
         public bool ActiveGhosts { get; set; }
         private LinkedList<Location>[] cellLog;
 
-        public PacmanAgent(Random r)
+        public PacmanAgent(Random r) : base(r)
         {
-            random = r;
             Execute = 1;
             ActiveGhosts = true;
         }
@@ -262,7 +255,7 @@ namespace NeatAlgorithm.Pacman
             return new double[]{ Time % 2 };
         }
 
-        public long Evaluate(Genome g, DataDictionary dd)
+        public override long Evaluate(Genome g, DataDictionary dd)
         {
             PacmanDataDictionary pdd = dd as PacmanDataDictionary;
             long best = long.MinValue;
@@ -343,8 +336,9 @@ namespace NeatAlgorithm.Pacman
 
 
 
-        public virtual void Display(Genome genome, DataDictionary dd)
+        public override void Display(Genome genome, DataDictionary dd)
         {
+            base.Display(genome, dd);
             Initialize();
             Player.Genome = genome;
             LinkedList<Location>[] cell = (dd as PacmanDataDictionary).GetFrightenData(genome.GenomeId);
@@ -568,6 +562,11 @@ namespace NeatAlgorithm.Pacman
             }
             Thread.Sleep(140);
             
+        }
+
+        public override string ToString()
+        {
+            return "Pacman";
         }
     }
     

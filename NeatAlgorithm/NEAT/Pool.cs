@@ -87,7 +87,7 @@ namespace NeatAlgorithm.NEAT
         // 가장 높은 적합도를 가진 개체
         public Genome BestGenome { get; private set; }
 
-        public IAgent Agent { get; set; }
+        public Agent Agent { get; set; }
         public DataDictionary DataDictionary { get; set; }
         public IWriter Writer { get;  set; }
 

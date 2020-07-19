@@ -23,7 +23,7 @@ namespace NeatAlgorithm
             AnalyzeForm af = new AnalyzeForm();
             System.Windows.Forms.Application.Run(af);
 
-            //SnakeForm sf = new SnakeForm();
+            //GameForm sf = new GameForm();
             //System.Windows.Forms.Application.Run(sf);
             //Snake(r);
         }
@@ -39,7 +39,7 @@ namespace NeatAlgorithm
 
         static void Snake(Random r)
         {
-            for (int i = 20; i < 50; ++i)
+            for (int i = 3; i < 50; ++i)
             {
                 Pool p = new Pool(24, 4, r);
                 p.Population = 500;
@@ -54,20 +54,20 @@ namespace NeatAlgorithm
                 p.LinkMutationChance = 0.75;
                 p.ConnectionMutationChance = 0.2;
                 p.NodeMutationChance = 0.2;
-                //Writer w = new Writer(new FileInfo(string.Format("D://NEAT/Data{0}.txt", i)));
+                Writer w = new Writer(new FileInfo(string.Format("D://NEAT/Snake/QuadScore/Data{0}.txt", i)));
 
-                //p.WritePlayData = true;
-                //p.WriteSpecies = true;
-                //p.Writer = w;
+                p.WritePlayData = true;
+                p.WriteSpecies = true;
+                p.Writer = w;
                 p.DataDictionary = sdd;
-                //w.Start(p, sa.Execute);
+                w.Start(p, sa.Execute);
                 p.Initialize();
-                p.DisplayTop = 5;
+                p.DisplayTop = int.MaxValue;
 
                 for (int k = 0; k < 300; ++k)
                 {
                     p.Evaluate();
-                    //w.Sw.Flush();
+                    w.Sw.Flush();
                 }
             }
         }
@@ -192,18 +192,14 @@ namespace NeatAlgorithm
         }
 
         // Case 1
-        class XORAgent : IAgent
+        class XORAgent : Agent
         {
-            public void Display(Genome g, DataDictionary dd)
-            {
-
-            }
 
             // 순서대로 (1,0), (0,1), (1,1), (0,0)을 입력값에 넣었을 때,
             // (1,0)과 (0,1)에서는 참을 나타내는 0보다 큰 값,
             // (0,0)과 (1,1)에서는 거짓을 나타내는 0보다 작은 값(이 기준은 임의로 잡은 것이다.)이 나오면 맞는 결과라 보고
             // 맞춘 횟수를 적합도로 설정하였다.
-            public long Evaluate(Genome g, DataDictionary dd)
+            public override long Evaluate(Genome g, DataDictionary dd)
             {
                 int score = 0;
                 if(g.EvaluateNetwork(new double[] { 1,0})[0] >0)
@@ -229,16 +225,14 @@ namespace NeatAlgorithm
         }
 
         // Case 2
-        class FixedXORAgent : IAgent
+        class FixedXORAgent : Agent
         {
-            public void Display(Genome g, DataDictionary dd)
-            { }
 
             // 순서대로 (1,0), (0,1), (1,1), (0,0)을 입력값에 넣었을 때,
             // 정답이 '참'인 경우 출력값이 1보다 적으면 정답에서 출력값의 차를 제곱한 값과,
             // 정답이 '거짓'인 경우 출력값이 -1보다 크면 정답에서 출력값의 차를 제곱한 값의 합을 계산하고, (정답이 참 또는 거짓이라는게 정답을 맞췄다는 의미가 아니다. xor 연산의 결과가 참 또는 거짓인지를 의미한다.)
             // 그 값의 역수에 1000을 곱한 값을 적합도 함수로 사용하였다.
-            public long Evaluate(Genome g, DataDictionary dd)
+            public override long Evaluate(Genome g, DataDictionary dd)
             {
                 int score = 0;
                 double fitness = 0;

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace NeatAlgorithm._2048
 {
-    class Data2048Dictionary : DataDictionary
+    public class Data2048Dictionary : DataDictionary
     {
 
 

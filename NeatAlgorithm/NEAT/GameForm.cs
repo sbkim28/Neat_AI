@@ -1,5 +1,7 @@
-﻿using NeatAlgorithm.Data;
+﻿using NeatAlgorithm._2048;
+using NeatAlgorithm.Data;
 using NeatAlgorithm.NEAT;
+using NeatAlgorithm.Snake;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,22 +14,22 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 
-namespace NeatAlgorithm.Snake
+namespace NeatAlgorithm.NEAT
 {
-    public partial class SnakeForm : Form
+    public partial class GameForm : Form
     {
 
         private bool hasData;
         private Reader reader;
-        private SnakeDataDictionary sdd;
-        private SnakeAgent sa;
+        private DataDictionary dd;
+        private Agent agent;
         private bool isPlaying;
         private CancellationTokenSource cts;
+        private GameFactory gf;
 
-        public SnakeForm()
+        public GameForm()
         {
             InitializeComponent();
-            sa = new SnakeAgent(16,16, null);
             isPlaying = false;
             ChartTopScore.Series.Clear();
         }
@@ -47,7 +49,7 @@ namespace NeatAlgorithm.Snake
                 {
                     isPlaying = false;
                     cts.Cancel();
-                    sa.Gameover = true;
+                    agent.Gameover = true;
                 }
                 string filename = ofd.FileName;
                 InputGen.Enabled = true;
@@ -56,6 +58,8 @@ namespace NeatAlgorithm.Snake
                 ReadFile(ofd.FileName);
                 BtnPlay.Enabled = true;
                 DrawTopScore();
+                gf = reader.GameFactory;
+                agent = gf.GetAgent(null);
             }
         }
 
@@ -68,8 +72,8 @@ namespace NeatAlgorithm.Snake
             int gen = 0;
             foreach(Genome g in reader.Best)
             {
-                long[] score = sdd.GetScore(g.GenomeId);
-                long best = score[0];
+                int[] score = dd.GetScore(g.GenomeId);
+                int best = score[0];
                 for(int i = 1; i < score.Length; ++i)
                 {
                     if(score[i] > best)
@@ -84,10 +88,8 @@ namespace NeatAlgorithm.Snake
         private void BtnPlay_Click(object sender, EventArgs e)
         {
             if (isPlaying) return;
-            sa.Initialize();
-            sa.Drawer = new Draw(Draw);
-            sa.DisplayDelay = (int) InputSpeed.Value;
-            Console.Write(sa.DisplayDelay);
+            agent.Drawer = new Draw(Draw);
+            agent.DisplayDelay = (int) InputSpeed.Value;
             isPlaying = true;
             int gen = (int)InputGen.Value;
             Genome genome = reader.Best[gen];
@@ -100,7 +102,7 @@ namespace NeatAlgorithm.Snake
 
             Task.Factory.StartNew(() =>
             {
-                sa.Display(genome, sdd);
+                agent.Display(genome, dd);
             }, cts.Token);
 
 
@@ -108,7 +110,7 @@ namespace NeatAlgorithm.Snake
 
         private void Draw()
         {
-            if (sa.Gameover)
+            if (agent.Gameover)
             {
                 isPlaying = false;
                 return;
@@ -119,8 +121,7 @@ namespace NeatAlgorithm.Snake
         private void ReadFile(string file)
         {
             reader = new Reader(file, 24, 4);
-            sdd = new SnakeDataDictionary();
-            reader.Read(sdd);
+            dd = reader.Read();
             Console.Write(reader.Gen);
             InputGen.Maximum = reader.Gen;
             InputGen.Minimum = 0;
@@ -138,30 +139,39 @@ namespace NeatAlgorithm.Snake
             Graphics canvas = e.Graphics;
             if (!isPlaying) return;
 
-            LblScoreValue.Text = "" + sa.Score;
-            LblHungerValue.Text = "" + sa.Hunger;
+            LblScoreValue.Text = "" + agent.Score;
 
-            Brush color = Brushes.White;
-            int x = sa.X;
-            int y = sa.Y;
-            int[,] cells = new int[y, x];
-            foreach (Square s in sa.Snake)
+            if (agent is SnakeAgent)
             {
-                cells[s.Y, s.X] = -1;
-            }
-            cells[sa.Food.Y, sa.Food.X] = 1;
-            for (int i = 0; i < y; ++i)
-            {
-                for (int j = 0; j < x; ++j)
+                SnakeAgent sa = agent as SnakeAgent;
+                Brush color = Brushes.White;
+
+                LblHungerValue.Text = "" + sa.Hunger;
+
+                int x = sa.X;
+                int y = sa.Y;
+                int[,] cells = new int[y, x];
+                foreach (Square s in sa.Snake)
                 {
-                    if (cells[i, j] == 0) color = Brushes.White;
-                    else if (cells[i, j] == -1) color = Brushes.Black;
-                    else if (cells[i, j] == 1) color = Brushes.Red;
-                    canvas.FillRectangle(color, new Rectangle(
-                            j * 20 + 1, i * 20 + 1, 18, 18
-                        ));
+                    cells[s.Y, s.X] = -1;
+                }
+                cells[sa.Food.Y, sa.Food.X] = 1;
+                for (int i = 0; i < y; ++i)
+                {
+                    for (int j = 0; j < x; ++j)
+                    {
+                        if (cells[i, j] == 0) color = Brushes.White;
+                        else if (cells[i, j] == -1) color = Brushes.Black;
+                        else if (cells[i, j] == 1) color = Brushes.Red;
+                        canvas.FillRectangle(color, new Rectangle(
+                                j * 20 + 1, i * 20 + 1, 18, 18
+                            ));
+                    }
                 }
             }
+
+
+
         }
 
         private void BtnStop_Click(object sender, EventArgs e)
@@ -170,7 +180,7 @@ namespace NeatAlgorithm.Snake
             {
                 isPlaying = false;
                 cts.Cancel();
-                sa.Gameover = true;
+                agent.Gameover = true;
             }
         }
     }

@@ -1,6 +1,6 @@
-﻿namespace NeatAlgorithm.Snake
+﻿namespace NeatAlgorithm.NEAT
 {
-    partial class SnakeForm
+    partial class GameForm
     {
         /// <summary>
         /// Required designer variable.

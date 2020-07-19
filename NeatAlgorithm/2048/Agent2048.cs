@@ -8,26 +8,24 @@ using NeatAlgorithm.NEAT;
 
 namespace NeatAlgorithm._2048
 {
-    class Agent2048 : IAgent
+
+    class Agent2048 : Agent
     {
-        public long Score { get; set; }
         public int FailCount { get; private set; }
         public int FailLimit { get; set; }
         public int[] Cells { get; set; }
-        public bool Gameover { get; set; }
-        public int Execute { get; set; }
         
-
-        private Random random;
-
-        public Agent2048(Random random)
+        public Direction PrevDirection { get; set; }
+        
+        
+        public Agent2048(Random random)  :base(random)
         {
-            this.random = random;
             FailLimit = int.MaxValue;
-            Execute = 1;
+            Drawer = new Draw(ConsoleDraw);
+            DisplayDelay = 50;
         }
         
-        public void Initialize(int id, LinkedList<CreatedCells> cellLog)
+        public void Initialize(LinkedList<CreatedCells> cellLog)
         {
             Cells = new int[16];
             Score = 0;
@@ -48,7 +46,7 @@ namespace NeatAlgorithm._2048
             return inputs;
         }
 
-        public long Evaluate(Genome g, DataDictionary dd)
+        public override long Evaluate(Genome g, DataDictionary dd)
         {
             Data2048Dictionary d2d = dd as Data2048Dictionary;
             long best = long.MinValue;
@@ -61,7 +59,7 @@ namespace NeatAlgorithm._2048
             for (int i = 0; i < Execute; ++i)
             {
                 LinkedList<CreatedCells> cellLog = new LinkedList<CreatedCells>();
-                Initialize(g.GenomeId, cellLog);
+                Initialize(cellLog);
                 lifetime = 0;
                 while (!Gameover)
                 {
@@ -103,8 +101,9 @@ namespace NeatAlgorithm._2048
             return Score;
         }
 
-        public virtual void Display(Genome g, DataDictionary dd)
+        public override void Display(Genome g, DataDictionary dd)
         {
+            base.Display(g, dd);
             Data2048Dictionary d2d = dd as Data2048Dictionary;
             Console.Clear();
             Cells = new int[16];
@@ -133,27 +132,31 @@ namespace NeatAlgorithm._2048
                     --index;
                 }
 
-                int i = 0;
 
                 cnode = cnode.Next;
                 Cells[cnode.Value.index] = cnode.Value.isTwo ? 1 : 2;
                 SetGameover();
-                Console.Clear();
-                Console.WriteLine("Direction : " + (Direction)order[index] + ", Score : " + Score);
-                foreach (int cell in Cells)
-                {
-                    Console.Write((cell == 0 ? "" : "" + Util.MathUtils.Pow(2, cell)) + "\t");
-                    if (++i == 4)
-                    {
-                        i = 0;
-                        Console.WriteLine();
-                        Console.WriteLine();
-                    }
-                }
-                Thread.Sleep(50);
-
+                PrevDirection = (Direction)order[index];
+                Drawer();
+                Thread.Sleep(DisplayDelay);
             }
-            
+        }
+
+        public void ConsoleDraw()
+        {
+            int i = 0;
+            Console.Clear();
+            Console.WriteLine("Direction : " + PrevDirection + ", Score : " + Score);
+            foreach (int cell in Cells)
+            {
+                Console.Write((cell == 0 ? "" : "" + Util.MathUtils.Pow(2, cell)) + "\t");
+                if (++i == 4)
+                {
+                    i = 0;
+                    Console.WriteLine();
+                    Console.WriteLine();
+                }
+            }
         }
 
         public void CreateRandom(int emptySize, LinkedList<CreatedCells> cellLog)
@@ -348,7 +351,10 @@ namespace NeatAlgorithm._2048
             return GetEmptyCells(SizeEmpty());
         }
 
-        
+        public override string ToString()
+        {
+            return "2048";
+        }
     }
     public struct CreatedCells
     {

@@ -1,4 +1,7 @@
-﻿using NeatAlgorithm.NEAT;
+﻿using NeatAlgorithm._2048;
+using NeatAlgorithm.NEAT;
+using NeatAlgorithm.Pacman;
+using NeatAlgorithm.Snake;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -29,7 +32,8 @@ namespace NeatAlgorithm.Data
 
         public int Gen { get; private set; }
         public int Species { get; private set; }
-        
+
+        public GameFactory GameFactory { get; private set; }
 
         public string Filename { get; set; }
         private Pool pool;
@@ -43,10 +47,11 @@ namespace NeatAlgorithm.Data
             Best = new List<Genome>();
         }
         
+        
 
-        public void Read(DataDictionary d)
+        public DataDictionary Read()
         {
-
+            DataDictionary d = null;
             StreamReader sr = new StreamReader(Filename);
             string data;
             while ((data = sr.ReadLine()) != null)
@@ -69,6 +74,27 @@ namespace NeatAlgorithm.Data
                     DisableMutationChance = j["DisableMutationChance"].ToObject<double>();
                     SurviveRate = j["SurviveRate"].ToObject<double>();
                     Staleness = j["Staleness"].ToObject<int>();
+                    JToken gametoken = j["Game"];
+                    if (gametoken == null)
+                    {
+                        GameFactory = new SnakeGameFactory(16, 16);
+                    }
+                    else
+                    {
+                        string game = gametoken.ToString();
+                        if (game.StartsWith("Snake"))
+                        {
+                            GameFactory = new SnakeGameFactory(16, 16);
+                        }else if (game.Equals("2048"))
+                        {
+                            GameFactory = new Game2048Factory();
+                        }
+                        else if (game.Equals("Pacman"))
+                        {
+                            GameFactory = new PacmanGameFactory();
+                        }
+                    }
+                    d = GameFactory.GetDataDictionary();
                 }
                 else if (data.StartsWith("\"Gen\""))
                 {
@@ -80,7 +106,7 @@ namespace NeatAlgorithm.Data
                     g.FromGeneration = j["BestGenome"]["From"].ToObject<int>();
                     g.Fitness = j["BestGenome"]["Fitness"].ToObject<long>();
                     d.CreateScore(g.GenomeId, 1);
-                    d.AddScore(g.GenomeId, j["BestGenome"]["topScore"].ToObject<long>(), 0);
+                    d.AddScore(g.GenomeId, j["BestGenome"]["topScore"].ToObject<int>(), 0);
                     g.ExecutionTime = j["BestGenome"]["ExecutionTime"].ToObject<long>();
                 }
                 else if (data.StartsWith("\"Genome\""))
@@ -108,6 +134,8 @@ namespace NeatAlgorithm.Data
                 }
 
             }
+
+            return d;
         }
     }
 }
