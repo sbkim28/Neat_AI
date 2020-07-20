@@ -49,12 +49,13 @@
             this.LblHungerValue = new System.Windows.Forms.Label();
             this.BtnPlay = new System.Windows.Forms.Button();
             this.ChartTopScore = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.LblSpeed = new System.Windows.Forms.Label();
+            this.LblDuration = new System.Windows.Forms.Label();
             this.InputSpeed = new System.Windows.Forms.NumericUpDown();
             this.BtnStop = new System.Windows.Forms.Button();
             this.NetworkBox = new System.Windows.Forms.PictureBox();
             this.LblBest = new System.Windows.Forms.Label();
             this.LblBestWhere = new System.Windows.Forms.Label();
+            this.LblScoreChart = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.SnakeBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.InputGen)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ChartTopScore)).BeginInit();
@@ -111,7 +112,7 @@
             // InputGen
             // 
             this.InputGen.Enabled = false;
-            this.InputGen.Location = new System.Drawing.Point(392, 45);
+            this.InputGen.Location = new System.Drawing.Point(424, 44);
             this.InputGen.Maximum = new decimal(new int[] {
             0,
             0,
@@ -261,21 +262,23 @@
             chartArea2.Position.Width = 100F;
             chartArea2.Position.Y = 5F;
             this.ChartTopScore.ChartAreas.Add(chartArea2);
-            this.ChartTopScore.Location = new System.Drawing.Point(354, 100);
+            this.ChartTopScore.Location = new System.Drawing.Point(355, 116);
             this.ChartTopScore.Name = "ChartTopScore";
-            this.ChartTopScore.Size = new System.Drawing.Size(370, 179);
+            this.ChartTopScore.Size = new System.Drawing.Size(370, 209);
             this.ChartTopScore.TabIndex = 11;
             this.ChartTopScore.Text = "Top Score";
+            this.ChartTopScore.MouseEnter += new System.EventHandler(this.ChartTopScore_MouseEnter);
+            this.ChartTopScore.MouseLeave += new System.EventHandler(this.ChartTopScore_MouseLeave);
             // 
-            // LblSpeed
+            // LblDuration
             // 
-            this.LblSpeed.AutoSize = true;
-            this.LblSpeed.Font = new System.Drawing.Font("바탕", 9F);
-            this.LblSpeed.Location = new System.Drawing.Point(341, 77);
-            this.LblSpeed.Name = "LblSpeed";
-            this.LblSpeed.Size = new System.Drawing.Size(45, 12);
-            this.LblSpeed.TabIndex = 4;
-            this.LblSpeed.Text = "Speed:";
+            this.LblDuration.AutoSize = true;
+            this.LblDuration.Font = new System.Drawing.Font("바탕", 9F);
+            this.LblDuration.Location = new System.Drawing.Point(341, 77);
+            this.LblDuration.Name = "LblDuration";
+            this.LblDuration.Size = new System.Drawing.Size(61, 12);
+            this.LblDuration.TabIndex = 4;
+            this.LblDuration.Text = "Duration:";
             // 
             // InputSpeed
             // 
@@ -284,7 +287,7 @@
             0,
             0,
             0});
-            this.InputSpeed.Location = new System.Drawing.Point(392, 72);
+            this.InputSpeed.Location = new System.Drawing.Point(424, 71);
             this.InputSpeed.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -319,7 +322,7 @@
             // NetworkBox
             // 
             this.NetworkBox.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.NetworkBox.Location = new System.Drawing.Point(354, 285);
+            this.NetworkBox.Location = new System.Drawing.Point(354, 331);
             this.NetworkBox.Name = "NetworkBox";
             this.NetworkBox.Size = new System.Drawing.Size(370, 200);
             this.NetworkBox.TabIndex = 12;
@@ -330,26 +333,37 @@
             // 
             this.LblBest.AutoSize = true;
             this.LblBest.Font = new System.Drawing.Font("바탕", 9F);
-            this.LblBest.Location = new System.Drawing.Point(518, 50);
+            this.LblBest.Location = new System.Drawing.Point(550, 50);
             this.LblBest.Name = "LblBest";
-            this.LblBest.Size = new System.Drawing.Size(35, 12);
+            this.LblBest.Size = new System.Drawing.Size(63, 12);
             this.LblBest.TabIndex = 4;
-            this.LblBest.Text = "Best:";
+            this.LblBest.Text = "Best: Gen";
             // 
             // LblBestWhere
             // 
             this.LblBestWhere.AutoSize = true;
             this.LblBestWhere.Font = new System.Drawing.Font("바탕", 9F);
-            this.LblBestWhere.Location = new System.Drawing.Point(559, 50);
+            this.LblBestWhere.Location = new System.Drawing.Point(619, 50);
             this.LblBestWhere.Name = "LblBestWhere";
-            this.LblBestWhere.Size = new System.Drawing.Size(0, 12);
+            this.LblBestWhere.Size = new System.Drawing.Size(11, 12);
             this.LblBestWhere.TabIndex = 4;
+            this.LblBestWhere.Text = "0";
+            // 
+            // LblScoreChart
+            // 
+            this.LblScoreChart.AutoSize = true;
+            this.LblScoreChart.Font = new System.Drawing.Font("바탕", 9F);
+            this.LblScoreChart.Location = new System.Drawing.Point(352, 101);
+            this.LblScoreChart.Name = "LblScoreChart";
+            this.LblScoreChart.Size = new System.Drawing.Size(64, 12);
+            this.LblScoreChart.TabIndex = 4;
+            this.LblScoreChart.Text = "Top Score";
             // 
             // GameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(752, 496);
+            this.ClientSize = new System.Drawing.Size(737, 543);
             this.Controls.Add(this.NetworkBox);
             this.Controls.Add(this.ChartTopScore);
             this.Controls.Add(this.BtnStop);
@@ -368,9 +382,10 @@
             this.Controls.Add(this.LblScore);
             this.Controls.Add(this.InputSpeed);
             this.Controls.Add(this.InputGen);
-            this.Controls.Add(this.LblSpeed);
+            this.Controls.Add(this.LblDuration);
             this.Controls.Add(this.LblBestWhere);
             this.Controls.Add(this.LblBest);
+            this.Controls.Add(this.LblScoreChart);
             this.Controls.Add(this.LblGenInput);
             this.Controls.Add(this.Filename);
             this.Controls.Add(this.BtnLoad);
@@ -409,11 +424,12 @@
         private System.Windows.Forms.Label LblHungerValue;
         private System.Windows.Forms.Button BtnPlay;
         private System.Windows.Forms.DataVisualization.Charting.Chart ChartTopScore;
-        private System.Windows.Forms.Label LblSpeed;
+        private System.Windows.Forms.Label LblDuration;
         private System.Windows.Forms.NumericUpDown InputSpeed;
         private System.Windows.Forms.Button BtnStop;
         private System.Windows.Forms.PictureBox NetworkBox;
         private System.Windows.Forms.Label LblBest;
         private System.Windows.Forms.Label LblBestWhere;
+        private System.Windows.Forms.Label LblScoreChart;
     }
 }

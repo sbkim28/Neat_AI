@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -103,6 +106,7 @@ namespace NeatAlgorithm.NEAT
         private Stopwatch insw;
         
         public Random random;
+        
 
         // 생성자
         // 초기 값들을 설정함
@@ -130,6 +134,7 @@ namespace NeatAlgorithm.NEAT
             Staleness = 15;
             
             WritePlayData = false;
+            WriteSpecies = false;
             SurviveRate = 0;
             DisplayTop = 1;
             Species = new List<Species>();
@@ -322,6 +327,7 @@ namespace NeatAlgorithm.NEAT
                 {
                     cut = s.Genomes.Count - (int)Math.Ceiling(s.Genomes.Count * SurviveRate);
                 }
+                s.ResetFitness();
                 s.Genomes.RemoveRange(0, cut);
                 s.Genomes[0].Fitness = 0;
                 s.Genomes[0].Checked = false;
@@ -452,8 +458,57 @@ namespace NeatAlgorithm.NEAT
         {
             return GenomeId++;
         }
-        
-        
 
+
+
+        public void Write()
+        {
+
+            JObject pool = new JObject(
+                new JProperty("Inputs", Inputs),
+                new JProperty("Outputs", Outputs),
+                new JProperty("MaxNodes", MaxNodes),
+                new JProperty("Population", Population),
+                new JProperty("Generation", Generation),
+                new JProperty("Innovation", Innovation),
+                new JProperty("DeltaThreshold", DeltaThreshold),
+                new JProperty("DeltaDisjoint", DeltaDisjoint),
+                new JProperty("DeltaWeight", DeltaWeight),
+                new JProperty("Cut", Cut),
+                new JProperty("LinkMutationChance", LinkMutationChance),
+                new JProperty("PerturbChance", PerturbChance),
+                new JProperty("StepSize", StepSize),
+                new JProperty("ConnectionMutationChance", ConnectionMutationChance),
+                new JProperty("NodeMutationChance", NodeMutationChance),
+                new JProperty("EnableMutationChance", EnableMutationChance),
+                new JProperty("DisableMutationChance", DisableMutationChance),
+                new JProperty("BreedChance", BreedChance),
+                new JProperty("SurviveRate", SurviveRate),
+                new JProperty("Staleness", Staleness),
+                new JProperty("DisplayTop", DisplayTop),
+                new JProperty("WritePlayData", WritePlayData),
+                new JProperty("WriteSpecies", WriteSpecies),
+                new JProperty("GenomeId", GenomeId),
+                new JProperty("SpeciesId", SpeciesId)
+
+                );
+
+            JArray species = new JArray();
+            foreach(Species s in Species)
+            {
+                JObject js = new JObject(
+                    new JProperty("SpeciesId", s.SpeciesId),
+                    new JProperty("Staleness", s.Staleness),
+                    new JProperty("FromGen", s.FromGen)
+                    );
+                 
+            }
+            pool.Add(species);
+        }
+
+        public static Pool Read(string file, Random r)
+        {
+            return null;
+        }
     }
 }

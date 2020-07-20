@@ -22,6 +22,7 @@ namespace NeatAlgorithm.Data
         private DirectoryInfo working;
         private bool isDrawing;
         private CancellationTokenSource cts;
+        private bool isDone;
 
         private string xVal;
         private string yVal;
@@ -60,7 +61,9 @@ namespace NeatAlgorithm.Data
         {
             if (isDrawing) return;
 
+            isDone = false;
             isDrawing = true;
+            bestOfAll = 0;
 
             cts = new CancellationTokenSource();
             LblState.Text = "Working";
@@ -171,6 +174,8 @@ namespace NeatAlgorithm.Data
                 Graph.Invalidate();
             }
         }
+
+
         
         private void Finish()
         {
@@ -179,15 +184,27 @@ namespace NeatAlgorithm.Data
                 Series s = Graph.Series.Add("Means");
                 Series s1 = Graph.Series.Add("95citop");
                 Series s2 = Graph.Series.Add("95cibot");
+                Series s5 = Graph.Series.Add("99citop");
+                Series s6 = Graph.Series.Add("99cibot");
                 Series s3 = Graph.Series.Add("999citop");
                 Series s4 = Graph.Series.Add("999cibot");
+                s1.Enabled = CB95.Checked;
+                s2.Enabled = CB95.Checked;
+                s3.Enabled = CB999.Checked;
+                s4.Enabled = CB999.Checked;
+                s5.Enabled = CB99.Checked;
+                s6.Enabled = CB99.Checked;
 
                 s.ChartType = SeriesChartType.Line;
                 s.Color = Color.Blue;
                 s1.ChartType = SeriesChartType.Line;
-                s1.Color = Color.Green;
+                s1.Color = Color.Cyan;
                 s2.ChartType = SeriesChartType.Line;
-                s2.Color = Color.Green;
+                s2.Color = Color.Cyan;
+                s5.ChartType = SeriesChartType.Line;
+                s5.Color = Color.Green;
+                s6.ChartType = SeriesChartType.Line;
+                s6.Color = Color.Green;
                 s3.ChartType = SeriesChartType.Line;
                 s3.Color = Color.Red;
                 s4.ChartType = SeriesChartType.Line;
@@ -232,10 +249,13 @@ namespace NeatAlgorithm.Data
                     s.Points.AddXY(i , means[i]);
                     s1.Points.AddXY(i , means[i] + 1.96 * stdDevs[i] / Math.Sqrt(count));
                     s2.Points.AddXY(i , means[i] - 1.96 * stdDevs[i] / Math.Sqrt(count));
+                    s5.Points.AddXY(i, means[i] + 2.58 * stdDevs[i] / Math.Sqrt(count));
+                    s6.Points.AddXY(i, means[i] - 2.58 * stdDevs[i] / Math.Sqrt(count));
                     s3.Points.AddXY(i, means[i] + 3.30 * stdDevs[i] / Math.Sqrt(count));
                     s4.Points.AddXY(i, means[i] - 3.30 * stdDevs[i] / Math.Sqrt(count));
 
                 }
+                isDone = true;
             }
         }
 
@@ -247,6 +267,37 @@ namespace NeatAlgorithm.Data
                 cts.Cancel();
                 LblState.Text = "Cancelled.";
             }
+        }
+
+        private void CB95_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!isDone) return;
+            Series s1 = Graph.Series["95citop"];
+            Series s2 = Graph.Series["95cibot"];
+            s1.Enabled = CB95.Checked;
+            s2.Enabled = CB95.Checked;
+            Graph.Invalidate();
+        }
+
+        private void CB99_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!isDone) return;
+            Series s1 = Graph.Series["99citop"];
+            Series s2 = Graph.Series["99cibot"];
+            s1.Enabled = CB99.Checked;
+            s2.Enabled = CB99.Checked;
+            Graph.Invalidate();
+
+        }
+
+        private void CB999_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!isDone) return;
+            Series s1 = Graph.Series["999citop"];
+            Series s2 = Graph.Series["999cibot"];
+            s1.Enabled = CB999.Checked;
+            s2.Enabled = CB999.Checked;
+            Graph.Invalidate();
         }
     }
 }

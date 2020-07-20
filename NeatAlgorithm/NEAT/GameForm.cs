@@ -18,8 +18,7 @@ namespace NeatAlgorithm.NEAT
 {
     public partial class GameForm : Form
     {
-
-        private bool hasData;
+        
         private Reader reader;
         private DataDictionary dd;
         private Agent agent;
@@ -32,6 +31,7 @@ namespace NeatAlgorithm.NEAT
             InitializeComponent();
             isPlaying = false;
             ChartTopScore.Series.Clear();
+            ChartTopScore.MouseWheel += ChartTopScore_MouseWheel;
         }
 
         private void BtnLoad_Click(object sender, EventArgs e)
@@ -51,6 +51,7 @@ namespace NeatAlgorithm.NEAT
                     cts.Cancel();
                     agent.Gameover = true;
                 }
+                ChartTopScore.ChartAreas[0].AxisX.ScaleView.ZoomReset();
                 string filename = ofd.FileName;
                 InputGen.Enabled = true;
                 Filename.ReadOnly = true;
@@ -231,7 +232,7 @@ namespace NeatAlgorithm.NEAT
                     {
                         double weight = Math.Atan(con.Weight);
                         weight *= 2.0 / Math.PI;
-                        Pen p = new Pen(Color.FromArgb(128 - (int)(weight * 120), 128 + (int)(weight * 120), 0));
+                        Pen p = new Pen(Color.FromArgb(128, 128 - (int)(weight * 120), 128 + (int)(weight * 120), 0));
                         int cx;
                         int cy = 10;
                         if (con.In < g.Pool.Inputs)
@@ -293,7 +294,7 @@ namespace NeatAlgorithm.NEAT
                 {
                     double weight = Math.Atan(con.Weight);
                     weight *= 2.0 / Math.PI;
-                    Pen p = new Pen(Color.FromArgb(128 - (int)(weight * 120), 128 + (int)(weight * 120), 0));
+                    Pen p = new Pen(Color.FromArgb(128, 128 - (int)(weight * 120), 128 + (int)(weight * 120), 0));
                     int cx;
                     int cy = 10;
                     if (con.In < g.Pool.Inputs)
@@ -336,5 +337,40 @@ namespace NeatAlgorithm.NEAT
             }
         }
 
+
+        private void ChartTopScore_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (ChartTopScore.Series.Count == 0) return;
+
+            Axis xAxis = ChartTopScore.ChartAreas[0].AxisX;
+
+            if (e.Delta < 0) // Scrolled down.
+            {
+                xAxis.ScaleView.ZoomReset();
+            }
+            else if (e.Delta > 0) // Scrolled up.
+            {
+                double xMin = xAxis.ScaleView.ViewMinimum;
+                double xMax = xAxis.ScaleView.ViewMaximum;
+
+                int posXStart = (int)(xAxis.PixelPositionToValue(e.Location.X) - (xMax - xMin) / 1.5);
+                int posXFinish = (int)(xAxis.PixelPositionToValue(e.Location.X) + (xMax - xMin) / 1.5);
+                
+                xAxis.ScaleView.Zoom(posXStart, posXFinish);
+            }
+        
+        }
+
+        private void ChartTopScore_MouseLeave(object sender, EventArgs e)
+        {
+            if (ChartTopScore.Focused) ChartTopScore.Parent.Focus();
+            
+        }
+
+        private void ChartTopScore_MouseEnter(object sender, EventArgs e)
+        {
+            if (!ChartTopScore.Focused) ChartTopScore.Focus();
+        }
     }
+
 }

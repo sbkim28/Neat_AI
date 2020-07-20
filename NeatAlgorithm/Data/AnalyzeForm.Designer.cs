@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.Graph = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.BtnLoad = new System.Windows.Forms.Button();
             this.Filename = new System.Windows.Forms.TextBox();
@@ -47,25 +47,28 @@
             this.LblGen = new System.Windows.Forms.Label();
             this.LblWhere = new System.Windows.Forms.Label();
             this.LblData = new System.Windows.Forms.Label();
+            this.CB95 = new System.Windows.Forms.CheckBox();
+            this.CB99 = new System.Windows.Forms.CheckBox();
+            this.CB999 = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.Graph)).BeginInit();
             this.SuspendLayout();
             // 
             // Graph
             // 
-            chartArea1.AxisX.MajorGrid.Interval = 50D;
-            chartArea1.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
-            chartArea1.AxisX.Minimum = 0D;
-            chartArea1.AxisX.MinorGrid.Enabled = true;
-            chartArea1.AxisX.MinorGrid.Interval = 25D;
-            chartArea1.AxisX.MinorGrid.LineColor = System.Drawing.Color.Gray;
-            chartArea1.AxisX.MinorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-            chartArea1.AxisX.ScaleBreakStyle.StartFromZero = System.Windows.Forms.DataVisualization.Charting.StartFromZero.No;
-            chartArea1.AxisY.Interval = 10D;
-            chartArea1.AxisY.MajorGrid.Interval = 10D;
-            chartArea1.AxisY.MinorGrid.Enabled = true;
-            chartArea1.AxisY.MinorGrid.Interval = 5D;
-            chartArea1.Name = "CharArea";
-            this.Graph.ChartAreas.Add(chartArea1);
+            chartArea4.AxisX.MajorGrid.Interval = 50D;
+            chartArea4.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
+            chartArea4.AxisX.Minimum = 0D;
+            chartArea4.AxisX.MinorGrid.Enabled = true;
+            chartArea4.AxisX.MinorGrid.Interval = 25D;
+            chartArea4.AxisX.MinorGrid.LineColor = System.Drawing.Color.Gray;
+            chartArea4.AxisX.MinorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            chartArea4.AxisX.ScaleBreakStyle.StartFromZero = System.Windows.Forms.DataVisualization.Charting.StartFromZero.No;
+            chartArea4.AxisY.Interval = 10D;
+            chartArea4.AxisY.MajorGrid.Interval = 10D;
+            chartArea4.AxisY.MinorGrid.Enabled = true;
+            chartArea4.AxisY.MinorGrid.Interval = 5D;
+            chartArea4.Name = "CharArea";
+            this.Graph.ChartAreas.Add(chartArea4);
             this.Graph.Location = new System.Drawing.Point(13, 13);
             this.Graph.Name = "Graph";
             this.Graph.Size = new System.Drawing.Size(837, 636);
@@ -251,11 +254,47 @@
             this.LblData.Size = new System.Drawing.Size(0, 12);
             this.LblData.TabIndex = 5;
             // 
+            // CB95
+            // 
+            this.CB95.AutoSize = true;
+            this.CB95.Location = new System.Drawing.Point(860, 167);
+            this.CB95.Name = "CB95";
+            this.CB95.Size = new System.Drawing.Size(46, 16);
+            this.CB95.TabIndex = 9;
+            this.CB95.Text = "95%";
+            this.CB95.UseVisualStyleBackColor = true;
+            this.CB95.CheckedChanged += new System.EventHandler(this.CB95_CheckedChanged);
+            // 
+            // CB99
+            // 
+            this.CB99.AutoSize = true;
+            this.CB99.Location = new System.Drawing.Point(952, 167);
+            this.CB99.Name = "CB99";
+            this.CB99.Size = new System.Drawing.Size(46, 16);
+            this.CB99.TabIndex = 9;
+            this.CB99.Text = "99%";
+            this.CB99.UseVisualStyleBackColor = true;
+            this.CB99.CheckedChanged += new System.EventHandler(this.CB99_CheckedChanged);
+            // 
+            // CB999
+            // 
+            this.CB999.AutoSize = true;
+            this.CB999.Location = new System.Drawing.Point(1044, 167);
+            this.CB999.Name = "CB999";
+            this.CB999.Size = new System.Drawing.Size(56, 16);
+            this.CB999.TabIndex = 9;
+            this.CB999.Text = "99.9%";
+            this.CB999.UseVisualStyleBackColor = true;
+            this.CB999.CheckedChanged += new System.EventHandler(this.CB999_CheckedChanged);
+            // 
             // AnalyzeForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1184, 661);
+            this.Controls.Add(this.CB999);
+            this.Controls.Add(this.CB99);
+            this.Controls.Add(this.CB95);
             this.Controls.Add(this.BtnCancel);
             this.Controls.Add(this.BtnDraw);
             this.Controls.Add(this.LblOf);
@@ -302,5 +341,8 @@
         private System.Windows.Forms.Label LblGen;
         private System.Windows.Forms.Label LblWhere;
         private System.Windows.Forms.Label LblData;
+        private System.Windows.Forms.CheckBox CB95;
+        private System.Windows.Forms.CheckBox CB99;
+        private System.Windows.Forms.CheckBox CB999;
     }
 }

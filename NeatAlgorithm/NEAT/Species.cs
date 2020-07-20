@@ -33,6 +33,10 @@ namespace NeatAlgorithm.NEAT
             TotalAdjustedFitness += adjustedFitness;
         }
 
+        public void ResetFitness()
+        {
+            TotalAdjustedFitness = 0;
+        }
         
 
     }

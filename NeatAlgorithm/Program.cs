@@ -20,11 +20,11 @@ namespace NeatAlgorithm
         {
             
             Random r = new Random();
-            AnalyzeForm af = new AnalyzeForm();
-            System.Windows.Forms.Application.Run(af);
+            //AnalyzeForm af = new AnalyzeForm();
+            //System.Windows.Forms.Application.Run(af);
 
-           // GameForm sf = new GameForm();
-           // System.Windows.Forms.Application.Run(sf);
+            GameForm sf = new GameForm();
+            System.Windows.Forms.Application.Run(sf);
             //Snake(r);
         }
 
@@ -39,7 +39,7 @@ namespace NeatAlgorithm
 
         static void Snake(Random r)
         {
-            for (int i = 3; i < 50; ++i)
+            for (int i = 0; i < 50; ++i)
             {
                 Pool p = new Pool(24, 4, r);
                 p.Population = 500;
@@ -52,7 +52,7 @@ namespace NeatAlgorithm
                 p.DeltaWeight = 4;
 
                 p.LinkMutationChance = 0.75;
-                p.ConnectionMutationChance = 0.2;
+                p.ConnectionMutationChance = 0.5;
                 p.NodeMutationChance = 0.2;
                 Writer w = new Writer(new FileInfo(string.Format("D://NEAT/Snake/QuadScore/Data{0}.txt", i)));
 
@@ -67,7 +67,7 @@ namespace NeatAlgorithm
                 for (int k = 0; k < 300; ++k)
                 {
                     p.Evaluate();
-                    w.Sw.Flush();
+                    //w.Sw.Flush();
                 }
             }
         }
