@@ -61,6 +61,7 @@ namespace NeatAlgorithm.NEAT
                 DrawTopScore();
                 gf = reader.GameFactory;
                 agent = gf.GetAgent(null);
+                agent.InputMode = reader.InputMode;
             }
         }
 
@@ -123,21 +124,16 @@ namespace NeatAlgorithm.NEAT
 
         private void Draw()
         {
-            if (agent.Gameover)
-            {
-                isPlaying = false;
-                return;
-            }
             BeginInvoke((Action)    (()=>{
-                SnakeBox.Invalidate();
                 NetworkBox.Invalidate();
+                GameBox.Invalidate();
 
             }));
         }
         
         private void ReadFile(string file)
         {
-            reader = new Reader(file, 24, 4);
+            reader = new Reader(file);
             dd = reader.Read();
             Console.Write(reader.Gen);
             InputGen.Maximum = reader.Gen;
@@ -163,23 +159,47 @@ namespace NeatAlgorithm.NEAT
                 int x = sa.X;
                 int y = sa.Y;
                 int[,] cells = new int[y, x];
+                cells[sa.Food.Y, sa.Food.X] = 1;
                 foreach (Square s in sa.Snake)
                 {
                     cells[s.Y, s.X] = -1;
                 }
-                cells[sa.Food.Y, sa.Food.X] = 1;
                 for (int i = 0; i < y; ++i)
                 {
                     for (int j = 0; j < x; ++j)
                     {
                         if (cells[i, j] == 0) color = Brushes.White;
-                        else if (cells[i, j] == -1) color = Brushes.Black;
+                        else if (cells[i, j] == -1)
+                        {
+                            color = Brushes.Black;
+                        }
                         else if (cells[i, j] == 1) color = Brushes.Red;
                         canvas.FillRectangle(color, new Rectangle(
-                                j * 20 + 1, i * 20 + 1, 18, 18
+                                j * GameBox.Width / x + 1, i * GameBox.Height / y + 1, GameBox.Width / x - 1, GameBox.Height / y - 1
                             ));
                     }
                 }
+            }else if(agent is Agent2048)
+            {
+                Agent2048 a2 = agent as Agent2048;
+                Brush color = Brushes.White;
+                for (int i = 0; i < 16; ++i)
+                {
+                    
+                    if (a2.Cells[i] == 0) color = Brushes.White;
+                    else
+                    {
+                        color = new SolidBrush(Color.FromArgb(255, 255,255- (a2.Cells[i] * 16)));
+                    }
+                    canvas.FillRectangle(color, new Rectangle(
+                                (i%4) * GameBox.Width / 4 + 1, (i/4) * GameBox.Height / 4 + 1, GameBox.Width / 4 - 1, GameBox.Height / 4 - 1
+                            ));
+                }
+            }
+
+            if (agent.Gameover)
+            {
+                isPlaying = false;
             }
         }
         private void UpdateTopology(object sender, PaintEventArgs e)
@@ -196,13 +216,11 @@ namespace NeatAlgorithm.NEAT
             foreach(int index in g.Network.Keys)
             {
                 Node n = g.Network[index];
-                double map = Math.Atan(n.value);
-
-                map *= 2.0 / Math.PI;
                 
                 if(index < g.Pool.Inputs)
                 {
-                    Brush color = new SolidBrush(Color.FromArgb(64, 64 + (int)( map * 64), 64 + (int)(map * 190) ));
+                    // map
+                    Brush color = new SolidBrush(Color.FromArgb(64, 64 + (int)(n.value * 64), 64 + (int)(n.value * 190) ));
                     int x = 5;
                     int y = 10;
 
@@ -218,6 +236,9 @@ namespace NeatAlgorithm.NEAT
 
                 } else if(index < g.Pool.MaxNodes)
                 {
+                    double map = Math.Atan(n.value);
+
+                    map *= 2.0 / Math.PI;
                     Brush color = new SolidBrush(Color.FromArgb(64, 64 + (int)(map * 64), 64 + (int)(map * 190)));
                     int x = 125;
                     int y = 10;
@@ -363,8 +384,11 @@ namespace NeatAlgorithm.NEAT
 
         private void ChartTopScore_MouseLeave(object sender, EventArgs e)
         {
-            if (ChartTopScore.Focused) ChartTopScore.Parent.Focus();
-            
+            if (ChartTopScore.Focused)
+            {
+                ChartTopScore.Enabled = false;
+                ChartTopScore.Enabled = true;
+            }
         }
 
         private void ChartTopScore_MouseEnter(object sender, EventArgs e)

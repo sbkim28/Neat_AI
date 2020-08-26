@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,7 +37,7 @@ namespace NeatAlgorithm.NEAT
             Sw.WriteLine("\"Settings\":{\"Game\":\"" + pool.Agent.ToString() +"\", \"Execution\":" + execute + ", \"Population\":" + pool.Population + ", \"DeltaThreshold\":" + pool.DeltaThreshold +
                 ", \"DeltaDisjoint\":" + pool.DeltaDisjoint + ", \"DeltaWeight\":" + pool.DeltaWeight + ", \"PerturbChance\":" + pool.PerturbChance + ", \"StepSize\":" + pool.StepSize +
                 ", \"LinkMutationChance\":" + pool.LinkMutationChance + ", \"ConnectionMutationChance\":" + pool.ConnectionMutationChance + ", \"NodeMutationChance\":" + pool.NodeMutationChance +
-                ", \"EnableMutationChance\":" + pool.EnableMutationChance + ", \"DisableMutationChance\":" + pool.DisableMutationChance + ", \"SurviveRate\":" + pool.SurviveRate + ", \"Staleness\":" + pool.Staleness + "}");
+                ", \"EnableMutationChance\":" + pool.EnableMutationChance + ", \"DisableMutationChance\":" + pool.DisableMutationChance + ", \"SurviveRate\":" + pool.SurviveRate + ", \"Staleness\":" + pool.Staleness + ", \"InputMode\":" + pool.Agent.InputMode +"}");
         }
 
         public void Record()
@@ -69,7 +70,7 @@ namespace NeatAlgorithm.NEAT
             Pool p = g.Pool;
             long scoreSum = 0;
             long bestScoreSum = 0;
-            long fitnessSum = 0;
+            BigInteger fitnessSum = 0;
             foreach (Species s in g.Pool.Species)
             {
                 foreach (Genome genomes in s.Genomes)
@@ -92,7 +93,7 @@ namespace NeatAlgorithm.NEAT
             }
             double scoreAvg = (double)scoreSum / p.Population / bestScores.Length;
             double bestScoreAvg = (double)bestScoreSum / p.Population;
-            double fitnessAvg = (double)fitnessSum / p.Population;
+            double fitnessAvg = (double) (fitnessSum / p.Population);
 
             StringBuilder sb = new StringBuilder();
             sb.Append("\"Gen\":{\"gen\":").Append(p.Generation).Append(", \"Species\":").Append(p.Species.Count)

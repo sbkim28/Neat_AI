@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.Graph = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.BtnLoad = new System.Windows.Forms.Button();
             this.Filename = new System.Windows.Forms.TextBox();
@@ -55,20 +55,18 @@
             // 
             // Graph
             // 
-            chartArea4.AxisX.MajorGrid.Interval = 50D;
-            chartArea4.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
-            chartArea4.AxisX.Minimum = 0D;
-            chartArea4.AxisX.MinorGrid.Enabled = true;
-            chartArea4.AxisX.MinorGrid.Interval = 25D;
-            chartArea4.AxisX.MinorGrid.LineColor = System.Drawing.Color.Gray;
-            chartArea4.AxisX.MinorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-            chartArea4.AxisX.ScaleBreakStyle.StartFromZero = System.Windows.Forms.DataVisualization.Charting.StartFromZero.No;
-            chartArea4.AxisY.Interval = 10D;
-            chartArea4.AxisY.MajorGrid.Interval = 10D;
-            chartArea4.AxisY.MinorGrid.Enabled = true;
-            chartArea4.AxisY.MinorGrid.Interval = 5D;
-            chartArea4.Name = "CharArea";
-            this.Graph.ChartAreas.Add(chartArea4);
+            chartArea1.AxisX.MajorGrid.Interval = 50D;
+            chartArea1.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
+            chartArea1.AxisX.Minimum = 0D;
+            chartArea1.AxisX.MinorGrid.Enabled = true;
+            chartArea1.AxisX.MinorGrid.Interval = 25D;
+            chartArea1.AxisX.MinorGrid.LineColor = System.Drawing.Color.Gray;
+            chartArea1.AxisX.MinorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+            chartArea1.AxisX.ScaleBreakStyle.StartFromZero = System.Windows.Forms.DataVisualization.Charting.StartFromZero.No;
+            chartArea1.AxisY.MajorGrid.Interval = 0D;
+            chartArea1.AxisY.MinorGrid.Enabled = true;
+            chartArea1.Name = "CharArea";
+            this.Graph.ChartAreas.Add(chartArea1);
             this.Graph.Location = new System.Drawing.Point(13, 13);
             this.Graph.Name = "Graph";
             this.Graph.Size = new System.Drawing.Size(837, 636);
@@ -97,13 +95,6 @@
             // DmnX
             // 
             this.DmnX.Items.Add("Generation");
-            this.DmnX.Items.Add("Top Score (Best)");
-            this.DmnX.Items.Add("Average Score (Best)");
-            this.DmnX.Items.Add("Fitness (Best)");
-            this.DmnX.Items.Add("Execution Time");
-            this.DmnX.Items.Add("Top Score (All)");
-            this.DmnX.Items.Add("Average Score (All)");
-            this.DmnX.Items.Add("Fitness (All)");
             this.DmnX.Location = new System.Drawing.Point(856, 63);
             this.DmnX.Name = "DmnX";
             this.DmnX.Size = new System.Drawing.Size(146, 21);
@@ -322,8 +313,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.DataVisualization.Charting.Chart Graph;
         private System.Windows.Forms.Button BtnLoad;
         private System.Windows.Forms.TextBox Filename;
         private System.Windows.Forms.DomainUpDown DmnX;
@@ -344,5 +333,6 @@
         private System.Windows.Forms.CheckBox CB95;
         private System.Windows.Forms.CheckBox CB99;
         private System.Windows.Forms.CheckBox CB999;
+        private System.Windows.Forms.DataVisualization.Charting.Chart Graph;
     }
 }

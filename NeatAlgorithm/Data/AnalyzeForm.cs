@@ -36,7 +36,6 @@ namespace NeatAlgorithm.Data
         {
             InitializeComponent();
             Graph.ChartAreas[0].AxisX.IntervalOffset = 0;
-            Graph.ChartAreas[0].AxisY.Interval = 10;
         }
 
         private void BtnLoad_Click(object sender, EventArgs e)
@@ -89,7 +88,7 @@ namespace NeatAlgorithm.Data
                 {
                     if (!isDrawing) return;
 
-                    Reader reader = new Reader(file.FullName, 24,4);
+                    Reader reader = new Reader(file.FullName);
                     DataDictionary dd = reader.Read();
                     BeginInvoke((Action)(() => Proceed(reader, dd)));
                 }
@@ -155,6 +154,17 @@ namespace NeatAlgorithm.Data
                             y = best;
                             break;
 
+                        case "Average Score (Best)":
+                            Genome g1 = reader.Best[i];
+                            int[] score1 = dd.GetScore(g1.GenomeId);
+                            double avg = 0;
+                            foreach (int s in score1)
+                            {
+                                avg += s;
+                            }
+                            y = (int) avg / score1.Length;
+                            break;
+
                         default:
                             y = 0;
                             break;
@@ -212,10 +222,11 @@ namespace NeatAlgorithm.Data
 
                 isDrawing = false;
                 LblState.Text = "Done";
-                means = new double[300];
-                stdDevs = new double[300];
+                int max = 300;
+                means = new double[max];
+                stdDevs = new double[max];
 
-                for (int i = 0; i < 300; ++i)
+                for (int i = 0; i < max; ++i)
                 {
                     int index = 0;
                     DataPoint[] dps = new DataPoint[count];
@@ -253,8 +264,9 @@ namespace NeatAlgorithm.Data
                     s6.Points.AddXY(i, means[i] - 2.58 * stdDevs[i] / Math.Sqrt(count));
                     s3.Points.AddXY(i, means[i] + 3.30 * stdDevs[i] / Math.Sqrt(count));
                     s4.Points.AddXY(i, means[i] - 3.30 * stdDevs[i] / Math.Sqrt(count));
-
+                    
                 }
+                Console.WriteLine("Avg : {0}\t 95%Up : {1}\t 95%Down : {2}", means[299], means[299] + 1.96 * stdDevs[299] / Math.Sqrt(count), means[299] - 1.96 * stdDevs[299] / Math.Sqrt(count));
                 isDone = true;
             }
         }

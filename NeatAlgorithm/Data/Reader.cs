@@ -29,6 +29,7 @@ namespace NeatAlgorithm.Data
         public double DisableMutationChance { get; private set; }
         public double SurviveRate { get; private set; }
         public int Staleness { get; private set; }
+        public int InputMode { get; private set; }
 
         public int Gen { get; private set; }
         public int Species { get; private set; }
@@ -40,10 +41,9 @@ namespace NeatAlgorithm.Data
         public List<Genome> Best { get; }
 
 
-        public Reader(string file, int inputs, int outputs)
+        public Reader(string file)
         {
             Filename = file;
-            pool = new Pool(inputs, outputs, null);
             Best = new List<Genome>();
         }
         
@@ -74,20 +74,35 @@ namespace NeatAlgorithm.Data
                     DisableMutationChance = j["DisableMutationChance"].ToObject<double>();
                     SurviveRate = j["SurviveRate"].ToObject<double>();
                     Staleness = j["Staleness"].ToObject<int>();
+                    JToken inputToken = j["InputMode"];
+                    if(inputToken == null)
+                    {
+                        InputMode = 0;
+                    }
+                    else
+                    {
+                        InputMode = inputToken.ToObject<int>();
+                    }
                     JToken gametoken = j["Game"];
                     if (gametoken == null)
                     {
                         GameFactory = new SnakeGameFactory(16, 16);
+                        pool = new Pool(24, 4, null);
                     }
                     else
                     {
                         string game = gametoken.ToString();
                         if (game.StartsWith("Snake"))
                         {
-                            GameFactory = new SnakeGameFactory(16, 16);
-                        }else if (game.Equals("2048"))
+                            string[] ds = game.Split('_');
+
+                            GameFactory = new SnakeGameFactory(int.Parse(ds[1]), int.Parse(ds[2]));
+                            pool = new Pool(24, 4, null);
+                        }
+                        else if (game.Equals("2048"))
                         {
                             GameFactory = new Game2048Factory();
+                            pool = new Pool(16, 4, null);
                         }
                         else if (game.Equals("Pacman"))
                         {
@@ -123,14 +138,29 @@ namespace NeatAlgorithm.Data
                     ja = j.SelectToken("food");
                     if (ja != null)
                     {
-                        Snake.SnakeDataDictionary sdd = d as Snake.SnakeDataDictionary;
-                        LinkedList<Snake.Square> foods = new LinkedList<Snake.Square>();
+                        SnakeDataDictionary sdd = d as SnakeDataDictionary;
+                        LinkedList<Square> foods = new LinkedList<Square>();
                         foreach (var food in ja)
                         {
-                            foods.AddLast(new Snake.Square(food[0].ToObject<int>(), food[1].ToObject<int>()));
+                            foods.AddLast(new Square(food[0].ToObject<int>(), food[1].ToObject<int>()));
                         }
                         sdd.AddFood(Best[Gen].GenomeId, foods);
                     }
+                    ja = j.SelectToken("cells");
+                    if(ja != null)
+                    {
+                        Data2048Dictionary d2d = d as Data2048Dictionary;
+                        LinkedList<CreatedCells> cc = new LinkedList<CreatedCells>();
+                        foreach(var cells in ja)
+                        {
+                            cc.AddLast(new CreatedCells(cells[0].ToObject<int>(), cells[1].ToObject<int>() == 2));
+                        }
+                        d2d.AddCells(Best[Gen].GenomeId, cc);
+                    }
+
+                } else if (data.StartsWith("\"Species\""))
+                {
+
                 }
 
             }

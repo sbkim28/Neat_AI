@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            this.SnakeBox = new System.Windows.Forms.PictureBox();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            this.GameBox = new System.Windows.Forms.PictureBox();
             this.DataFile = new System.Windows.Forms.OpenFileDialog();
             this.BtnLoad = new System.Windows.Forms.Button();
             this.Filename = new System.Windows.Forms.TextBox();
@@ -56,22 +56,22 @@
             this.LblBest = new System.Windows.Forms.Label();
             this.LblBestWhere = new System.Windows.Forms.Label();
             this.LblScoreChart = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.SnakeBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.GameBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.InputGen)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ChartTopScore)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.InputSpeed)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NetworkBox)).BeginInit();
             this.SuspendLayout();
             // 
-            // SnakeBox
+            // GameBox
             // 
-            this.SnakeBox.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.SnakeBox.Location = new System.Drawing.Point(12, 12);
-            this.SnakeBox.Name = "SnakeBox";
-            this.SnakeBox.Size = new System.Drawing.Size(320, 320);
-            this.SnakeBox.TabIndex = 0;
-            this.SnakeBox.TabStop = false;
-            this.SnakeBox.Paint += new System.Windows.Forms.PaintEventHandler(this.UpdateGraphics);
+            this.GameBox.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.GameBox.Location = new System.Drawing.Point(12, 12);
+            this.GameBox.Name = "GameBox";
+            this.GameBox.Size = new System.Drawing.Size(320, 320);
+            this.GameBox.TabIndex = 0;
+            this.GameBox.TabStop = false;
+            this.GameBox.Paint += new System.Windows.Forms.PaintEventHandler(this.UpdateGraphics);
             // 
             // DataFile
             // 
@@ -254,18 +254,19 @@
             // 
             // ChartTopScore
             // 
-            chartArea2.AxisX.Minimum = 0D;
-            chartArea2.AxisY.MajorGrid.Interval = 10D;
-            chartArea2.Name = "ChartArea1";
-            chartArea2.Position.Auto = false;
-            chartArea2.Position.Height = 90F;
-            chartArea2.Position.Width = 100F;
-            chartArea2.Position.Y = 5F;
-            this.ChartTopScore.ChartAreas.Add(chartArea2);
+            chartArea1.AxisX.Minimum = 0D;
+            chartArea1.AxisY.MajorGrid.Interval = 0D;
+            chartArea1.Name = "ChartArea1";
+            chartArea1.Position.Auto = false;
+            chartArea1.Position.Height = 90F;
+            chartArea1.Position.Width = 100F;
+            chartArea1.Position.Y = 5F;
+            this.ChartTopScore.ChartAreas.Add(chartArea1);
             this.ChartTopScore.Location = new System.Drawing.Point(355, 116);
             this.ChartTopScore.Name = "ChartTopScore";
             this.ChartTopScore.Size = new System.Drawing.Size(370, 209);
             this.ChartTopScore.TabIndex = 11;
+            this.ChartTopScore.TabStop = false;
             this.ChartTopScore.Text = "Top Score";
             this.ChartTopScore.MouseEnter += new System.EventHandler(this.ChartTopScore_MouseEnter);
             this.ChartTopScore.MouseLeave += new System.EventHandler(this.ChartTopScore_MouseLeave);
@@ -389,10 +390,10 @@
             this.Controls.Add(this.LblGenInput);
             this.Controls.Add(this.Filename);
             this.Controls.Add(this.BtnLoad);
-            this.Controls.Add(this.SnakeBox);
+            this.Controls.Add(this.GameBox);
             this.Name = "GameForm";
-            this.Text = "SnakeForm";
-            ((System.ComponentModel.ISupportInitialize)(this.SnakeBox)).EndInit();
+            this.Text = "GameForm";
+            ((System.ComponentModel.ISupportInitialize)(this.GameBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.InputGen)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ChartTopScore)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.InputSpeed)).EndInit();
@@ -404,7 +405,7 @@
 
         #endregion
 
-        private System.Windows.Forms.PictureBox SnakeBox;
+        private System.Windows.Forms.PictureBox GameBox;
         private System.Windows.Forms.OpenFileDialog DataFile;
         private System.Windows.Forms.Button BtnLoad;
         private System.Windows.Forms.TextBox Filename;

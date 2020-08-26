@@ -10,6 +10,8 @@ using System.Diagnostics;
 
 namespace NeatAlgorithm.Snake
 {
+    public delegate long Fitness(int Score, int Lifetime);
+
     public class SnakeAgent : Agent
     {
         public int X { get; set; }
@@ -17,10 +19,10 @@ namespace NeatAlgorithm.Snake
         public Direction previousMove;
         public LinkedList<Square> Snake { get; private set; }
         public Square Food { get; set; }
-        
+
         public int Hunger { get; private set; }
         public int LifeTime { get; private set; }
-       
+        public Fitness Fit { get; set; }
 
 
         public SnakeAgent(int x, int y, Random random) : base(random)
@@ -40,7 +42,7 @@ namespace NeatAlgorithm.Snake
             Snake.AddFirst(new Square(midX, midY - 1));
             Snake.AddFirst(new Square(midX, midY));
             Snake.AddFirst(new Square(midX, midY + 1));
-            Hunger = 256;
+            Hunger = X* Y;
             if(random != null)
                 CreateFood(random);
             LifeTime = 0;
@@ -175,19 +177,32 @@ namespace NeatAlgorithm.Snake
             bool bodyFound = false;
             while(posX >= 0 && posX < X && posY >= 0 && posY < Y)
             {
-                posX += ix;
-                posY += iy;
 
                 if(!foodFound && posX == Food.X && posY == Food.Y)
                 {
                     foodFound = true;
-                    look[1] = 1;
+                    if (InputMode % 2 == 0)
+                    {
+                        look[1] = 1;
+                    } else
+                    {
+                        look[1] = 1.0 / distance;
+                    }
                 }
                 if(!bodyFound && Snake.Contains(new Square(posX, posY)))
                 {
                     bodyFound = true;
-                    look[2] = 1.0 / distance;
+                    if (InputMode <2)
+                    {
+                        look[2] = 1.0 / distance;
+                    }
+                    else
+                    {
+                        look[2] = 1;
+                    }
                 }
+                posX += ix;
+                posY += iy;
                 ++distance;
             }
             look[0] = 1.0 / distance;
@@ -302,13 +317,13 @@ namespace NeatAlgorithm.Snake
             Snake.AddFirst(newHead);
             if (newHead.Equals(Food))
             {
-                Hunger = 256;
+                Hunger = X*Y;
+                Score += 1;
                 if (X * Y - Snake.Count == 0)
                 {
                     Gameover = true; return;
                 }
                 CreateFood(random);
-                Score += 1;
             }
             else
             {
@@ -326,6 +341,8 @@ namespace NeatAlgorithm.Snake
 
         public long Fitness()
         {
+
+
             long fitness;
             /*fitness = (int )Math.Min(LifeTime * LifeTime, 10000 + (LifeTime * 0.1)); 
             if(Score < 10)
@@ -337,7 +354,14 @@ namespace NeatAlgorithm.Snake
                 fitness *= 2048;
                 fitness *= Score - 9; 
             }*/
-            fitness = 5 * Score * Score;
+            if (Fit == null)
+            {
+                fitness = Execute * Score;
+            }
+            else
+            {
+                fitness = Fit(Score, LifeTime);
+            }
 
             return fitness;
         }

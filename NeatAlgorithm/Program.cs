@@ -23,9 +23,33 @@ namespace NeatAlgorithm
             //AnalyzeForm af = new AnalyzeForm();
             //System.Windows.Forms.Application.Run(af);
 
-            GameForm sf = new GameForm();
-            System.Windows.Forms.Application.Run(sf);
-            //Snake(r);
+            //GameForm sf = new GameForm();
+            //System.Windows.Forms.Application.Run(sf);
+            Snake(r);
+            //Analyze();
+            //_2048(r);
+        }
+
+        static void Analyze()
+        {
+            DataReader dr = new DataReader();
+            dr.Read();
+            double avg1 = 0;
+            int cnt = 0;
+            foreach(int c1 in dr.c1)
+            {
+                avg1 += c1;
+                if (c1 != 0) ++cnt;
+            }
+            Console.WriteLine(avg1 / cnt);
+            double avg2 = 0;
+            cnt = 0;
+            foreach (int c2 in dr.c2)
+            {
+                avg2 += c2;
+                if (c2 != 0) ++cnt;
+            }
+            Console.WriteLine(avg2 / cnt);
         }
 
         static void Pacman(Random r)
@@ -35,6 +59,47 @@ namespace NeatAlgorithm
 
         static void _2048(Random r)
         {
+            for(int i = 1; i < 2; ++i)
+            {
+                Pool p = new Pool(16, 4, r);
+                p.Population = 500;
+                Agent2048 a2 = new Agent2048(r);
+                a2.Execute = 5;
+                a2.FailLimit = 1;
+
+                a2.Fit = (int score, int logScore, int bitScore) =>
+                {
+                    double fit;
+                    fit = bitScore;
+                    return (long)fit;
+                };
+
+                Writer w = new Writer(new FileInfo(string.Format("D://NEAT/2048/Data{0}.txt", i)));
+                Data2048Dictionary d2d = new Data2048Dictionary();
+                p.Agent = a2;
+                p.DeltaThreshold = 10;
+                p.DeltaDisjoint = 10;
+                p.DeltaWeight = 4;
+
+
+
+                p.LinkMutationChance = 0.75;
+                p.ConnectionMutationChance = 0.5;
+                p.NodeMutationChance = 0.2;
+
+                p.WritePlayData = true;
+                p.WriteSpecies = true;
+                p.Writer = w;
+                p.DataDictionary = d2d;
+                w.Start(p, a2.Execute);
+                p.Initialize();
+                p.DisplayTop = int.MaxValue;
+                for (int k = 0; k < 3000; ++k)
+                {
+                    p.Evaluate();
+                }
+
+            }
         }
 
         static void Snake(Random r)
@@ -43,8 +108,34 @@ namespace NeatAlgorithm
             {
                 Pool p = new Pool(24, 4, r);
                 p.Population = 500;
-                SnakeAgent sa = new SnakeAgent(16, 16, r);
+                SnakeAgent sa = new SnakeAgent(8, 8, r);
                 sa.Execute = 5;
+
+                sa.InputMode = 3; // 0 food bi, tale m
+                                  // 1 food m, tale m
+                                  // 2 food bi tale bi
+                                  // 3 food m tale bi
+
+                sa.Fit = (int score, int lifetime) =>
+                {
+                    double fit = 1;
+                    
+                    if(score <= 20)
+                    {
+                        fit *= score * score * score;
+                    }
+                    else
+                    {
+                        fit = 8000;
+                        for(int j = 0;j<score - 20; ++j)
+                        {
+                            fit *= 1.25;
+                        }
+                    }
+                    return (long) (fit * 5);
+                };
+                Writer w = new Writer(new FileInfo(string.Format("D://NEAT/Snake88/RC125P3ScoreInput3/Data{0}.txt", i)));
+
                 SnakeDataDictionary sdd = new SnakeDataDictionary();
                 p.Agent = sa;
                 p.DeltaThreshold = 4;
@@ -54,7 +145,6 @@ namespace NeatAlgorithm
                 p.LinkMutationChance = 0.75;
                 p.ConnectionMutationChance = 0.5;
                 p.NodeMutationChance = 0.2;
-                Writer w = new Writer(new FileInfo(string.Format("D://NEAT/Snake/QuadScore/Data{0}.txt", i)));
 
                 p.WritePlayData = true;
                 p.WriteSpecies = true;
@@ -64,6 +154,7 @@ namespace NeatAlgorithm
                 p.Initialize();
                 p.DisplayTop = int.MaxValue;
 
+                
                 for (int k = 0; k < 300; ++k)
                 {
                     p.Evaluate();

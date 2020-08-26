@@ -17,6 +17,8 @@ namespace NeatAlgorithm.NEAT
         public Draw Drawer { get; set; }
         public Genome Current { get; private set; }
 
+        public int InputMode { get; set; }
+
         protected Random random;
 
         public Agent()

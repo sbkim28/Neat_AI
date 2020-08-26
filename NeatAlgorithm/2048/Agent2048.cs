@@ -8,6 +8,7 @@ using NeatAlgorithm.NEAT;
 
 namespace NeatAlgorithm._2048
 {
+    public delegate long Fitness(int score, int logScore, int bitScore);
 
     class Agent2048 : Agent
     {
@@ -16,11 +17,13 @@ namespace NeatAlgorithm._2048
         public int[] Cells { get; set; }
         
         public Direction PrevDirection { get; set; }
-        
+        public Fitness Fit { get; set; }
+
+        public int LogScore { get; set; }
         
         public Agent2048(Random random)  :base(random)
         {
-            FailLimit = int.MaxValue;
+            FailLimit = 1;
             Drawer = new Draw(ConsoleDraw);
             DisplayDelay = 50;
         }
@@ -29,6 +32,7 @@ namespace NeatAlgorithm._2048
         {
             Cells = new int[16];
             Score = 0;
+            LogScore = 0;
             FailCount = 0;
             Gameover = false;
             CreateRandom(16, cellLog);
@@ -41,7 +45,7 @@ namespace NeatAlgorithm._2048
             double[] inputs = new double[16];
             for(int i = 0; i < 16; ++i)
             {
-                inputs[i] = Cells[i];
+                inputs[i] = (double) Cells[i] / 16;
             }
             return inputs;
         }
@@ -78,6 +82,7 @@ namespace NeatAlgorithm._2048
 
                         --index;
                     }
+                    if (Gameover) break;
                     CreateRandom(SizeEmpty(), cellLog);
                     SetGameover();
                     ++lifetime;
@@ -98,16 +103,35 @@ namespace NeatAlgorithm._2048
 
         public long GetFitness()
         {
-            return Score;
+            long fitness;
+            
+            if(Fit == null)
+            {
+                fitness = Execute * Score;
+            }
+            else
+            {
+                int bitScore = 0;
+                bool[] bs = new bool[32];
+                for (int i = 0; i < 16; ++i)
+                {
+                    bs[Cells[i]] = true;
+                }
+                for (int i = 0; i < bs.Length; i++) if (bs[i]) bitScore |= 1 << i;
+                
+                fitness = Fit(Score, LogScore, bitScore);
+            }
+            return fitness;
         }
 
         public override void Display(Genome g, DataDictionary dd)
         {
             base.Display(g, dd);
             Data2048Dictionary d2d = dd as Data2048Dictionary;
-            Console.Clear();
+            
             Cells = new int[16];
             Score = 0;
+            LogScore = 0;
             FailCount = 0;
             Gameover = false;
             LinkedList<CreatedCells> cc = d2d.getCells(g.GenomeId);
@@ -131,7 +155,7 @@ namespace NeatAlgorithm._2048
                     }
                     --index;
                 }
-
+                if (Gameover) break;
 
                 cnode = cnode.Next;
                 Cells[cnode.Value.index] = cnode.Value.isTwo ? 1 : 2;
@@ -214,6 +238,7 @@ namespace NeatAlgorithm._2048
                                 Cells[prev] += 1;
                                 Cells[prev] *= -1;
                                 Score += Util.MathUtils.Pow(2, Cells[index] + 1);
+                                LogScore += Cells[index];
                             }
                             Cells[index] = 0;
                             ++act;
@@ -243,6 +268,7 @@ namespace NeatAlgorithm._2048
                                 Cells[prev] += 1;
                                 Cells[prev] *= -1;
                                 Score += Util.MathUtils.Pow(2, Cells[index] + 1);
+                                LogScore += Cells[index];
                             }
                             Cells[index] = 0;
                             ++act;
@@ -272,6 +298,7 @@ namespace NeatAlgorithm._2048
                                 Cells[prev] += 1;
                                 Cells[prev] *= -1;
                                 Score += Util.MathUtils.Pow(2, Cells[index] + 1);
+                                LogScore += Cells[index];
                             }
                             Cells[index] = 0;
                             ++act;
@@ -301,6 +328,7 @@ namespace NeatAlgorithm._2048
                                 Cells[prev] += 1;
                                 Cells[prev] *= -1;
                                 Score += Util.MathUtils.Pow(2, Cells[index] + 1);
+                                LogScore += Cells[index];
                             }
                             Cells[index] = 0;
                             ++act;
