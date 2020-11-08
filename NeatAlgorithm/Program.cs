@@ -9,6 +9,7 @@ using NeatAlgorithm.Util;
 using NeatAlgorithm.Data;
 using NeatAlgorithm.Snake;
 using NeatAlgorithm._2048;
+using NeatAlgorithm.Pacman;
 
 namespace NeatAlgorithm
 {
@@ -20,14 +21,14 @@ namespace NeatAlgorithm
         {
             
             Random r = new Random();
-            //AnalyzeForm af = new AnalyzeForm();
-            //System.Windows.Forms.Application.Run(af);
+            AnalyzeForm af = new AnalyzeForm();
+            System.Windows.Forms.Application.Run(af);
 
             //GameForm sf = new GameForm();
             //System.Windows.Forms.Application.Run(sf);
-            Snake(r);
+            //Snake(r);
             //Analyze();
-            //_2048(r);
+            //Pacman(r);
         }
 
         static void Analyze()
@@ -54,35 +55,72 @@ namespace NeatAlgorithm
 
         static void Pacman(Random r)
         {
+            for (int i = 0; i < 50; ++i)
+            {
+                Pool p = new Pool(17, 4, r);
+                p.Population = 500;
 
+                p.DeltaThreshold = 10;
+                p.DeltaDisjoint = 10;
+                p.DeltaWeight = 4;
+
+                p.LinkMutationChance = 0.75;
+                p.ConnectionMutationChance = 0.5;
+                p.NodeMutationChance = 0.2;
+
+                PacmanAgent pa = new PacmanAgent(r);
+                pa.Execute = 5;
+                pa.Fit = (int score, int time) =>
+                {
+                    double fit;
+                    long f = score / 10;
+                    return f*f*f*f;
+                };
+                Writer w = new Writer(new FileInfo(string.Format("D://NEAT/Pacman/ScoreSBP4/Data{0}.txt", i)));
+                PacmanDataDictionary pdd = new PacmanDataDictionary();
+
+                p.WritePlayData = true;
+                p.WriteSpecies = true;
+                p.DataDictionary = pdd;
+                p.Writer = w;
+
+                p.Agent = pa;
+                w.Start(p, pa.Execute);
+                p.Initialize();
+                p.DisplayTop = int.MaxValue;
+
+                for (int k = 0; k < 300; ++k)
+                {
+                    p.Evaluate();
+                }
+            }
         }
 
         static void _2048(Random r)
         {
-            for(int i = 1; i < 2; ++i)
+            for(int i = 0; i < 50; ++i)
             {
                 Pool p = new Pool(16, 4, r);
                 p.Population = 500;
                 Agent2048 a2 = new Agent2048(r);
                 a2.Execute = 5;
                 a2.FailLimit = 1;
+                a2.InputMode = 3;
 
                 a2.Fit = (int score, int logScore, int bitScore) =>
                 {
                     double fit;
-                    fit = bitScore;
+                    fit = (long) score * score * score;
                     return (long)fit;
                 };
 
-                Writer w = new Writer(new FileInfo(string.Format("D://NEAT/2048/Data{0}.txt", i)));
+                Writer w = new Writer(new FileInfo(string.Format("D://NEAT/2048/CubeScoreInput3/Data{0}.txt", i)));
                 Data2048Dictionary d2d = new Data2048Dictionary();
                 p.Agent = a2;
                 p.DeltaThreshold = 10;
                 p.DeltaDisjoint = 10;
                 p.DeltaWeight = 4;
-
-
-
+                
                 p.LinkMutationChance = 0.75;
                 p.ConnectionMutationChance = 0.5;
                 p.NodeMutationChance = 0.2;
@@ -94,7 +132,7 @@ namespace NeatAlgorithm
                 w.Start(p, a2.Execute);
                 p.Initialize();
                 p.DisplayTop = int.MaxValue;
-                for (int k = 0; k < 3000; ++k)
+                for (int k = 0; k < 300; ++k)
                 {
                     p.Evaluate();
                 }

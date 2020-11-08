@@ -49,19 +49,21 @@ namespace NeatAlgorithm.Pacman
             {
                 sb.Append("[");
                 LinkedListNode<Location> link = cells[k].First;
-                bool flag = false;
-                do
+                if (link != null)
                 {
-                    sb.Append(link.Value.ToString());
-                    sb.Append(", ");
-                    flag = true;
-                } while ((link = link.Next) != null);
+                    bool flag = false;
+                    do
+                    {
+                        sb.Append(link.Value.ToString());
+                        sb.Append(", ");
+                        flag = true;
+                    } while ((link = link.Next) != null);
 
-                if (flag)
-                {
-                    sb.Remove(sb.Length - 2, 2);
+                    if (flag)
+                    {
+                        sb.Remove(sb.Length - 2, 2);
+                    }
                 }
-            
                 sb.Append("], ");
             }
             sb.Remove(sb.Length - 2, 2);

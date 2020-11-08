@@ -9,8 +9,17 @@ namespace NeatAlgorithm.Pacman
 {
     public class Player : Instance
     {
+        public bool invalid;
+        public bool initiated;
         public Genome Genome { get; set; }
         public double[] Input { get; set; }
+
+        public Player()
+        {
+            this.invalid = false;
+            CurrentDirection = Direction.LEFT;
+        }
+
         public override void Move(Direction[] m)
         {
 
@@ -55,6 +64,7 @@ namespace NeatAlgorithm.Pacman
 
         public void Move(Direction[] m, Direction d)
         {
+            invalid = false;
             bool flag = false;
             bool flag2 = false;
             foreach(Direction able in m)
@@ -73,6 +83,7 @@ namespace NeatAlgorithm.Pacman
             }
             if (!flag)
             {
+                invalid = true;
                 if (flag2) Location = MoveDirection(Location, CurrentDirection);
                 
             }

@@ -45,7 +45,20 @@ namespace NeatAlgorithm._2048
             double[] inputs = new double[16];
             for(int i = 0; i < 16; ++i)
             {
-                inputs[i] = (double) Cells[i] / 16;
+                if (InputMode == 0)
+                {
+                    inputs[i] = (double)Cells[i] / 16;
+                }else if(InputMode == 1)
+                {
+                    inputs[i] = (double)Util.MathUtils.Pow(2, Cells[i]) / 65536;
+                } else if(InputMode == 2)
+                {
+                    inputs[i] = (double)1 / (Cells[i]+1);
+                    
+                } else if(InputMode == 3)
+                {
+                    inputs[i] = (double)1 / Util.MathUtils.Pow(2, Cells[i]);
+                }
             }
             return inputs;
         }

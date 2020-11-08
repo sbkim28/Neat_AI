@@ -7,6 +7,8 @@ using System.Threading;
 
 namespace NeatAlgorithm.Pacman
 {
+    public delegate long Fitness(int Score, int Lifetime);
+
     public class PacmanAgent : Agent
     {
         
@@ -43,6 +45,8 @@ namespace NeatAlgorithm.Pacman
             {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1}, // 30
             {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1} };
 
+        // 1,1 1,6 1,12 1,15 1,21 
+
         public static readonly Location GHOST_TARGET = new Location(13, 11);
 
         public static readonly Location[] SCATTER_TARGET = new Location[] { new Location(0, 31), new Location(27, 31), new Location(2, -4), new Location(25, -4) };
@@ -51,12 +55,13 @@ namespace NeatAlgorithm.Pacman
         public int[,] Cells { get; private set; } // x 28 // y 31
         public int LeftDots { get; private set; }
         public int Time { get; set; }
-        
+        public bool Invincible { get; set; }
 
         public Ghost[] Ghosts { get; set; } // 0 for clyde, 1 for inky, 2 for pinky, 3 for blinky
         public Player Player { get; set; }
         public bool ActiveGhosts { get; set; }
         private LinkedList<Location>[] cellLog;
+        public Fitness Fit;
 
         public PacmanAgent(Random r) : base(r)
         {
@@ -90,11 +95,18 @@ namespace NeatAlgorithm.Pacman
             {
                 cellLog[j] = new LinkedList<Location>();
             }
+            Invincible = false;
         }
 
         public void Tick()
         {
             ++Time;
+            if (Time > 10000)
+            {
+                Gameover = true;
+                return;
+            }
+       
             int index = 0;
             if (ActiveGhosts)
             {
@@ -207,14 +219,33 @@ namespace NeatAlgorithm.Pacman
 
             if(Time % 2 == 0)
             {
-                Player.Input = GetInputs();
-                Player.Move(GetMovables(Player.Location));
+                Direction[] ds = GetMovables(Player.Location);
+                if (ds.Length > 2 || ((int)ds[0] + 2) % 4 != (int)ds[1])
+                {
+                    Player.Input = GetInputs();
+                    Player.Move(ds);
+                }
+                else
+                {
+                    Player.Location = Instance.MoveDirection(Player.Location, Player.CurrentDirection);
+                }
 
-                if(Cells[Player.Location.Y, Player.Location.X] == 2)
+                if (Player.invalid)
+                {
+                    Gameover = true;
+                    return;
+                }
+
+                if (Cells[Player.Location.Y, Player.Location.X] == 2)
                 {
                     Score+= 10;
                     Cells[Player.Location.Y, Player.Location.X] = 0;
                     --LeftDots;
+                    if (LeftDots == 0)
+                    {
+                        Gameover = true;
+                        return;
+                    }
                 }else if(Cells[Player.Location.Y, Player.Location.X] == 4)
                 {
                     Score += 50;
@@ -251,8 +282,89 @@ namespace NeatAlgorithm.Pacman
 
         public double[] GetInputs()
         {
-            // todo
-            return new double[]{ Time % 2 };
+            double[] inputs = new double[17];
+
+            int px = Player.Location.X;
+            int py = Player.Location.Y;
+
+            int d = 1;
+            /*
+            while (inputs[0] != 0 && inputs[1] !=0 && inputs[2] != 0 && inputs[3]!=0) 
+            {
+                if(inputs[0]!=0){
+                    if (Cells[py, px + d] == 1)
+                        inputs[0] = 0;
+                    else if (Cells[py, px + d] == 2 && inputs[4] == 0)
+                        inputs[4] = ToValue(d);
+                }
+                if (inputs[1] != 0)
+                {
+                    if (Cells[py + d, px] == 1)
+                        inputs[1] = ToValue(d);
+                    else if (Cells[py + d, px] == 2 && inputs[5] == 0)
+                        inputs[5] = ToValue(d);
+                }
+                if (inputs[2] != 0)
+                {
+                    if (Cells[py, px-d] == 1)
+                        inputs[2] = ToValue(d);
+                    else if (Cells[py, px-d] == 2 && inputs[6] == 0)
+                        inputs[6] = ToValue(d);
+                }
+                if (inputs[3] != 0)
+                {
+                    if (Cells[py - d, px] == 1)
+                        inputs[3] = ToValue(d);
+                    else if (Cells[py - d, px] == 2 && inputs[7] == 0)
+                        inputs[7] = ToValue(d);
+                }
+                ++d;
+            }*/
+
+            if (Cells[py, px + 1] == 1)
+                inputs[0] = 1;
+            else if(Cells[py, px + 1] == 2)
+                inputs[4] = 1;
+
+            if (Cells[py, px - 1] == 1)
+                inputs[1] = 1;
+            else if (Cells[py, px - 1] == 2)
+                inputs[5] = 1;
+
+            if (Cells[py+1, px] == 1)
+                inputs[2] = 1;
+            else if (Cells[py+1, px] == 2)
+                inputs[6] = 1;
+
+            if (Cells[py-1, px] == 1)
+                inputs[3] = 1;
+            else if (Cells[py-1, px ] == 2)
+                inputs[7] = 1;
+
+            int i = 8;
+            foreach(Ghost g in Ghosts)
+            {
+                if (g.Killed)
+                {
+                    inputs[i] = 0;
+                    inputs[i + 1] = 0;
+                }
+                else
+                {
+                    inputs[i] = ToValue(g.Location.X - px);
+                    inputs[i+1] = ToValue(g.Location.Y - py);
+                }
+                i+=2;
+            }
+            inputs[16] = Ghosts[0].Frighten ? 1 : 0;
+
+            return inputs;
+        }
+
+
+        private double ToValue(int d)
+        {
+            return 1.0 / d;
         }
 
         public override long Evaluate(Genome g, DataDictionary dd)
@@ -288,7 +400,16 @@ namespace NeatAlgorithm.Pacman
 
         public long Fitness()
         {
-            return Score +1;
+            long fitness;
+            if(Fit == null)
+            {
+                fitness = Score + 1;
+            }
+            else
+            {
+                fitness = Fit(Score, Time);
+            }
+            return fitness;
         }
 
 
@@ -464,8 +585,23 @@ namespace NeatAlgorithm.Pacman
                 //PlayerTick
                 if (Time % 2 == 0)
                 {
-                    Player.Input = GetInputs();
-                    Player.Move(GetMovables(Player.Location));
+                    Direction[] ds = GetMovables(Player.Location);
+                    if (ds.Length > 2 || ((int)ds[0] + 2) % 4 != (int)ds[1])
+                    {
+                        Player.Input = GetInputs();
+                        Player.Move(ds);
+                    }
+                    else
+                    {
+                        Player.Location = Instance.MoveDirection(Player.Location, Player.CurrentDirection);
+                    }
+
+
+                    if (Player.invalid)
+                    {
+                        Gameover = true;
+                        continue;
+                    }
 
                     if (Cells[Player.Location.Y, Player.Location.X] == 2)
                     {

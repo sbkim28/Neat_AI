@@ -107,6 +107,7 @@ namespace NeatAlgorithm.Data
                         else if (game.Equals("Pacman"))
                         {
                             GameFactory = new PacmanGameFactory();
+                            pool = new Pool(1, 4, null);
                         }
                     }
                     d = GameFactory.GetDataDictionary();
